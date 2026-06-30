@@ -101,3 +101,19 @@
 - Work completed:
   - Added `preload="auto"` to the hero video markup.
   - Added a small script that enforces autoplay, muted playback, native looping, and an `ended` fallback restart.
+
+## 2026-06-29
+### 17:47:39
+- Request: Remove the plan-first confirmation workflow from local and project agent instructions.
+- Assessment: Updated the stale folder-local instructions; workspace-level instructions were already execution-first.
+- Work completed:
+  - Replaced `designscapes/AGENTS.local.md` plan-first guidance with execution-first defaults.
+  - Verified `/Users/denniskenyon/projects/AGENTS.md` already says not to require separate approval before changes.
+
+## 2026-06-29
+### 17:58:49
+- Request: Apply the advertising-editor copy edits across the Horizon Pier page.
+- Assessment: Replaced abstract digital-detox language with concrete, sensory pier language while preserving the existing visuals.
+- Work completed:
+  - Updated hero, gallery, story, and right-column copy to use the tightened editorial direction.
+  - Removed unfulfilled `Visit` and `Contact` nav/footer labels from the page.
