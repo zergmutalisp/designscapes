@@ -117,3 +117,12 @@
 - Work completed:
   - Updated hero, gallery, story, and right-column copy to use the tightened editorial direction.
   - Removed unfulfilled `Visit` and `Contact` nav/footer labels from the page.
+
+## 2026-06-29
+### 18:15:08
+- Request: Add the new night pier image and implement restrained immersive art-direction tweaks.
+- Assessment: Replaced the `Always` image and used reversible CSS grading, hierarchy, and mobile composition updates instead of heavy nostalgic effects.
+- Work completed:
+  - Added `uploads/always-night-lamps.jpg` and used it for the `Always` gallery image.
+  - Made `Dawn` the lead gallery image with `Reflection` and `Always` as supporting images.
+  - Added subtle editorial image grading, slow hero drift, mobile hero line breaks, and a quieter footer.
