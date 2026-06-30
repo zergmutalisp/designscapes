@@ -93,3 +93,11 @@
   - Replaced the previous page assets with `index.html`, `support.js`, `.thumbnail`, and the full `uploads/` media folder.
   - Renamed the exported HTML file to `index.html` for GitHub Pages.
   - Removed obsolete `assets/`, `reference/`, and `styles.css` content from the old page.
+
+## 2026-06-29
+### 17:46:09
+- Request: Make the top banner video loop reliably.
+- Assessment: Added a runtime guard so the exported page keeps the hero video looping after the Design Compiler runtime renders it.
+- Work completed:
+  - Added `preload="auto"` to the hero video markup.
+  - Added a small script that enforces autoplay, muted playback, native looping, and an `ended` fallback restart.

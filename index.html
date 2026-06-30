@@ -66,7 +66,7 @@
 
 <!-- ───── HERO ───── -->
 <section style="position: relative; width: 100%; height: 520px; overflow: hidden;">
-  <video autoplay muted loop playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: center right;">
+  <video autoplay muted loop playsinline preload="auto" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: center right;">
     <source src="uploads/pier_at_the_soft_haze_of_the_golden_hour_glowing.mp4" type="video/mp4" />
   </video>
   <!-- Subtle left fade so text stays readable -->
@@ -182,5 +182,60 @@
 </footer>
 
 </x-dc>
+<script>
+  (() => {
+    const heroVideoFile = "pier_at_the_soft_haze_of_the_golden_hour_glowing.mp4";
+
+    function isHeroVideo(video) {
+      if (!(video instanceof HTMLVideoElement)) return false;
+      if (video.closest("x-dc")) return false;
+      if (video.currentSrc.includes(heroVideoFile) || video.src.includes(heroVideoFile)) return true;
+      return Array.from(video.querySelectorAll("source")).some((source) => {
+        return source.src.includes(heroVideoFile) || (source.getAttribute("src") || "").includes(heroVideoFile);
+      });
+    }
+
+    function play(video) {
+      const attempt = video.play();
+      if (attempt && typeof attempt.catch === "function") {
+        attempt.catch(() => {});
+      }
+    }
+
+    function enableLoop(video) {
+      if (!isHeroVideo(video) || video.__horizonPierLoopReady) return;
+      video.__horizonPierLoopReady = true;
+      video.loop = true;
+      video.muted = true;
+      video.defaultMuted = true;
+      video.playsInline = true;
+      video.autoplay = true;
+      video.preload = "auto";
+      video.setAttribute("loop", "");
+      video.setAttribute("muted", "");
+      video.setAttribute("playsinline", "");
+      video.setAttribute("autoplay", "");
+      video.setAttribute("preload", "auto");
+      video.addEventListener("ended", () => {
+        video.currentTime = 0;
+        play(video);
+      });
+      video.addEventListener("canplay", () => play(video), { once: true });
+      play(video);
+    }
+
+    function setupHeroVideoLoop() {
+      document.querySelectorAll("video").forEach(enableLoop);
+    }
+
+    setupHeroVideoLoop();
+    window.addEventListener("DOMContentLoaded", setupHeroVideoLoop);
+    window.addEventListener("load", setupHeroVideoLoop);
+    new MutationObserver(setupHeroVideoLoop).observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  })();
+</script>
 </body>
 </html>
