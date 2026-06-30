@@ -84,3 +84,12 @@
   - Reduced right panel width/type/icon spacing and moved the panel further right for closer reference parity.
   - Reduced left hero heading/subtitle/CTA scale and shifted the left content block toward the left edge.
   - Kept responsive breakpoints and component hierarchy intact, limiting the change to desktop composition tokens.
+
+## 2026-06-29
+### 17:38:38
+- Request: Replace the existing `designscapes` site with the new `newdesign` project from Downloads.
+- Assessment: Performed a full static project replacement while preserving repo metadata and local workflow files.
+- Work completed:
+  - Replaced the previous page assets with `index.html`, `support.js`, `.thumbnail`, and the full `uploads/` media folder.
+  - Renamed the exported HTML file to `index.html` for GitHub Pages.
+  - Removed obsolete `assets/`, `reference/`, and `styles.css` content from the old page.
