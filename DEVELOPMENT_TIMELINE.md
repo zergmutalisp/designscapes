@@ -257,3 +257,12 @@
   - Removed the year-selection update from chart pointer entry while retaining the year-specific hover tooltip.
   - Kept click-to-select behavior synchronized across the chart marker, inspector slider, and exact-value detail table.
   - Added a browser regression proving hover and pointer exit preserve the selected year while click commits and retains a new year.
+
+## 2026-07-10
+### 12:59:14
+- Request: Add click-and-drag chart selection with a preview indicator, commit on release inside the plot, and cancel releases outside the plot.
+- Assessment: Model drag as a reversible preview transaction using pointer capture, explicit plot-bound checks, and a distinct ghost band while preserving the committed inspector state until a valid release.
+- Work completed:
+  - Added a dashed translucent green preview band, grabbing and cancellation cursors, and a “Release to inspect” tooltip that follows the candidate mortgage year.
+  - Committed the slider, selected band, and detail table only on primary-button release inside the plotting bounds; outside releases, pointer cancellation, and resize interruption preserve the prior selection.
+  - Preserved ordinary click selection and non-mouse tap fallback, then added browser regressions for drag preview, inside release, outside cancellation, and unchanged mobile behavior.

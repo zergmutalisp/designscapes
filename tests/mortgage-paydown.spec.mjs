@@ -97,6 +97,50 @@ test('treats chart hover as temporary and commits the inspector only on click', 
   await expect(page.locator('#inspect-year-output')).toHaveText('Year 8');
 });
 
+test('previews a dragged year and commits only when released inside the plot', async ({ page }) => {
+  await openCalculator(page, { width: 1440, height: 900 });
+
+  const inspector = page.getByRole('slider', { name: 'Inspect year' });
+  const previewBand = page.locator('.drag-preview-band');
+  const tooltip = page.locator('#chart-tooltip');
+  const startHit = page.locator('.year-hit[data-year="4"]');
+  const destinationHit = page.locator('.year-hit[data-year="11"]');
+
+  await startHit.hover();
+  const startBox = await startHit.boundingBox();
+  const destinationBox = await destinationHit.boundingBox();
+  await page.mouse.move(startBox.x + startBox.width / 2, startBox.y + startBox.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(
+    destinationBox.x + destinationBox.width / 2,
+    destinationBox.y + destinationBox.height / 2,
+    { steps: 8 }
+  );
+
+  await expect(inspector).toHaveValue('2');
+  await expect(previewBand).toHaveClass(/is-visible/);
+  await expect(tooltip).toContainText('Release to inspect Year 11');
+
+  await page.mouse.up();
+  await expect(inspector).toHaveValue('11');
+  await expect(page.locator('#inspect-year-output')).toHaveText('Year 11');
+  await expect(previewBand).not.toHaveClass(/is-visible/);
+
+  const cancelStart = page.locator('.year-hit[data-year="6"]');
+  await cancelStart.hover();
+  const cancelBox = await cancelStart.boundingBox();
+  const chartBox = await page.locator('#paydown-chart').boundingBox();
+  await page.mouse.move(cancelBox.x + cancelBox.width / 2, cancelBox.y + cancelBox.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(chartBox.x - 16, cancelBox.y + cancelBox.height / 2, { steps: 8 });
+
+  await expect(previewBand).not.toHaveClass(/is-visible/);
+  await expect(tooltip).toBeHidden();
+  await page.mouse.up();
+  await expect(inspector).toHaveValue('11');
+  await expect(page.locator('#inspect-year-output')).toHaveText('Year 11');
+});
+
 test('does not advertise an extra payment when the selected window cannot apply one', async ({ page }) => {
   await openCalculator(page);
 

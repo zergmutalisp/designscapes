@@ -71,6 +71,7 @@ import { calculateMortgage } from './mortgage-core.js';
   let displayedPlan = [];
   let displayedOriginal = [];
   let chartLayout = null;
+  let chartDrag = null;
   let statusTimer = 0;
   let downInputMode = 'percent';
 
@@ -321,6 +322,7 @@ import { calculateMortgage } from './mortgage-core.js';
 
   function renderChart(planYears = displayedPlan, originalYears = displayedOriginal) {
     if (!model || !planYears.length || !originalYears.length) return;
+    if (chartDrag) clearChartDrag();
 
     const width = Math.max(220, Math.round(chartShell.clientWidth));
     const compact = width < 520;
@@ -426,6 +428,7 @@ import { calculateMortgage } from './mortgage-core.js';
       <text class="axis-label" x="${plotLeft}" y="16">${paymentAxisLabel}</text>
       <text class="axis-label" x="${plotLeft}" y="${balanceTop - 14}">Remaining mortgage balance</text>
       <rect class="selected-band" x="${selectedBandX}" y="${paymentTop}" width="${step}" height="${balanceBottom - paymentTop}"></rect>
+      <rect class="drag-preview-band" x="${selectedBandX}" y="${paymentTop}" width="${step}" height="${balanceBottom - paymentTop}"></rect>
       ${paymentGrid}
       ${bars}
       ${balanceGrid}
@@ -442,6 +445,11 @@ import { calculateMortgage } from './mortgage-core.js';
     chartLayout = {
       width,
       height,
+      plotLeft,
+      plotRight,
+      paymentTop,
+      balanceBottom,
+      step,
       positions: planYears.map((year, index) => ({
         x: xFor(index),
         stackTop: paymentY(year.principal + year.interest)
@@ -451,11 +459,15 @@ import { calculateMortgage } from './mortgage-core.js';
     if (!compact) {
       chart.querySelectorAll('.year-hit').forEach(hit => {
         hit.addEventListener('pointerenter', () => {
+          if (chartDrag) return;
           showTooltip(Number(hit.dataset.year));
         });
-        hit.addEventListener('click', () => {
-          selectYear(Number(hit.dataset.year));
-          showTooltip(Number(hit.dataset.year));
+        hit.addEventListener('pointerdown', beginChartDrag);
+        hit.addEventListener('click', event => {
+          if (event.pointerType === 'mouse') return;
+          const year = Number(hit.dataset.year);
+          selectYear(year);
+          showTooltip(year);
           updateYearDetail(true);
         });
       });
@@ -528,6 +540,97 @@ import { calculateMortgage } from './mortgage-core.js';
     inspectYear.value = String(nextYear);
     updateYearDetail();
     renderChart();
+  }
+
+  function yearAtPointer(event) {
+    if (!chartLayout) return null;
+    const bounds = chart.getBoundingClientRect();
+    if (!bounds.width || !bounds.height) return null;
+    const x = (event.clientX - bounds.left) / bounds.width * chartLayout.width;
+    const y = (event.clientY - bounds.top) / bounds.height * chartLayout.height;
+    const inside = x >= chartLayout.plotLeft
+      && x <= chartLayout.plotRight
+      && y >= chartLayout.paymentTop
+      && y <= chartLayout.balanceBottom;
+    if (!inside) return null;
+    const index = clamp(Math.floor((x - chartLayout.plotLeft) / chartLayout.step), 0, 29);
+    return index + 1;
+  }
+
+  function hideDragPreview() {
+    chart.querySelector('.drag-preview-band')?.classList.remove('is-visible');
+    chartShell.classList.remove('is-drag-outside');
+    tooltip.hidden = true;
+  }
+
+  function showDragPreview(year) {
+    const band = chart.querySelector('.drag-preview-band');
+    if (!band || !chartLayout || year === null) {
+      band?.classList.remove('is-visible');
+      chartShell.classList.add('is-drag-outside');
+      tooltip.hidden = true;
+      return;
+    }
+
+    chartShell.classList.remove('is-drag-outside');
+    band.setAttribute('x', String(chartLayout.plotLeft + chartLayout.step * (year - 1)));
+    band.classList.add('is-visible');
+    tooltip.innerHTML = `
+      <strong>Release to inspect Year ${year}</strong>
+      <span>Drag outside the chart to cancel.</span>
+    `;
+    tooltip.hidden = false;
+
+    requestAnimationFrame(() => {
+      const bounds = tooltip.getBoundingClientRect();
+      const center = chartLayout.positions[year - 1].x;
+      tooltip.style.left = `${clamp(center - bounds.width / 2, 8, chartLayout.width - bounds.width - 8)}px`;
+      tooltip.style.top = '8px';
+    });
+  }
+
+  function clearChartDrag() {
+    if (!chartDrag) return;
+    const pointerId = chartDrag.pointerId;
+    chartDrag = null;
+    chartShell.classList.remove('is-dragging');
+    hideDragPreview();
+    if (chart.hasPointerCapture?.(pointerId)) chart.releasePointerCapture(pointerId);
+  }
+
+  function beginChartDrag(event) {
+    if (event.pointerType !== 'mouse' || event.button !== 0 || !event.isPrimary) return;
+    const year = yearAtPointer(event);
+    if (year === null) return;
+    event.preventDefault();
+    tooltip.hidden = true;
+    chartDrag = { pointerId: event.pointerId, candidateYear: year };
+    chartShell.classList.add('is-dragging');
+    chart.setPointerCapture?.(event.pointerId);
+    showDragPreview(year);
+  }
+
+  function moveChartDrag(event) {
+    if (!chartDrag || event.pointerId !== chartDrag.pointerId) return;
+    const year = yearAtPointer(event);
+    if (year === chartDrag.candidateYear) return;
+    chartDrag.candidateYear = year;
+    showDragPreview(year);
+  }
+
+  function commitChartDrag(event) {
+    if (!chartDrag || event.pointerId !== chartDrag.pointerId) return;
+    const year = yearAtPointer(event);
+    clearChartDrag();
+    if (year === null) return;
+    selectYear(year);
+    showTooltip(year);
+    updateYearDetail(true);
+  }
+
+  function cancelChartDrag(event) {
+    if (!chartDrag || (event?.pointerId !== undefined && event.pointerId !== chartDrag.pointerId)) return;
+    clearChartDrag();
   }
 
   function showTooltip(year) {
@@ -671,8 +774,13 @@ import { calculateMortgage } from './mortgage-core.js';
   inspectYear.addEventListener('change', () => updateYearDetail(true));
 
   chartShell.addEventListener('pointerleave', () => {
-    tooltip.hidden = true;
+    if (!chartDrag) tooltip.hidden = true;
   });
+
+  chart.addEventListener('pointermove', moveChartDrag);
+  chart.addEventListener('pointerup', commitChartDrag);
+  chart.addEventListener('pointercancel', cancelChartDrag);
+  chart.addEventListener('lostpointercapture', cancelChartDrag);
 
   resetButton.addEventListener('click', resetCalculator);
 

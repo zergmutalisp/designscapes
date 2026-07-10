@@ -520,6 +520,20 @@ button:focus-visible {
   opacity: 0.5;
 }
 
+#paydown-chart .drag-preview-band {
+  fill: var(--accent-soft);
+  opacity: 0;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+  pointer-events: none;
+  transition: opacity 120ms ease;
+}
+
+#paydown-chart .drag-preview-band.is-visible {
+  opacity: 0.72;
+}
+
 #paydown-chart .bar-principal {
   fill: var(--principal);
 }
@@ -602,7 +616,17 @@ button:focus-visible {
 
 #paydown-chart .year-hit {
   fill: transparent;
-  cursor: crosshair;
+  cursor: grab;
+}
+
+.chart-shell.is-dragging #paydown-chart,
+.chart-shell.is-dragging #paydown-chart .year-hit {
+  cursor: grabbing;
+}
+
+.chart-shell.is-drag-outside #paydown-chart,
+.chart-shell.is-drag-outside #paydown-chart .year-hit {
+  cursor: not-allowed;
 }
 
 .chart-tooltip {
