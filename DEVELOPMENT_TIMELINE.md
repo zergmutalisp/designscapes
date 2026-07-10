@@ -194,3 +194,12 @@
   - Replaced the splash hero source with responsive 624px desktop and 480px mobile H.264 encodes plus a matching poster frame.
   - Reduced the 819 KB source to a 136 KB desktop file and a 64 KB phone file with fast-start playback metadata.
   - Adjusted the desktop crop and verified autoplay, looping, source selection, full-bleed coverage, text contrast, and zero overflow at 1440×900 and 390×844.
+
+## 2026-07-09
+### 22:12:51
+- Request: Remove the “Useful things, carefully made” splash headline and replace the supporting sentence with “Experimenting with visual story telling and practical tools.”
+- Assessment: Let the cloud footage carry the hero and retain only a quiet kicker, one direct sentence, and the demos link.
+- Work completed:
+  - Removed the hero headline and its obsolete accessibility reference.
+  - Added the requested sentence verbatim and tightened its size and spacing for the reduced copy composition.
+  - Verified the minimal hero composition and zero overflow at 1440×900 and 390×844.
