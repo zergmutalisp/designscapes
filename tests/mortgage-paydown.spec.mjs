@@ -15,6 +15,26 @@ test('shows verified defaults and a keyboard-readable desktop inspector', async 
   await expect(page.locator('#time-saved')).toHaveText('15 yr 3 mo');
   await expect(page.locator('#year-original-balance')).toHaveText('$390,759');
   await expect(page.locator('#year-balance-gap')).toHaveText('$24,424');
+  await expect(page.locator('#interest-saved').locator('xpath=..')).toHaveClass(/positive-delta/);
+  await expect(page.locator('#year-balance-gap')).toHaveClass(/positive-delta-value/);
+  const positiveDeltaStyles = await page.evaluate(() => ({
+    interestSaved: {
+      color: getComputedStyle(document.querySelector('#interest-saved')).color,
+      background: getComputedStyle(document.querySelector('#interest-saved')).backgroundImage
+    },
+    balanceReduction: {
+      color: getComputedStyle(document.querySelector('#year-balance-gap')).color,
+      background: getComputedStyle(document.querySelector('#year-balance-gap')).backgroundImage
+    },
+    paymentColor: getComputedStyle(document.querySelector('#payment-with-extras')).color,
+    timeColor: getComputedStyle(document.querySelector('#time-saved')).color
+  }));
+  expect(positiveDeltaStyles.interestSaved.color).toBe('rgb(62, 107, 0)');
+  expect(positiveDeltaStyles.interestSaved.background).toContain('rgb(183, 243, 74)');
+  expect(positiveDeltaStyles.balanceReduction.color).toBe('rgb(62, 107, 0)');
+  expect(positiveDeltaStyles.balanceReduction.background).toContain('rgb(183, 243, 74)');
+  expect(positiveDeltaStyles.paymentColor).toBe('rgb(49, 92, 155)');
+  expect(positiveDeltaStyles.timeColor).toBe('rgb(49, 92, 155)');
   await expect(page.getByRole('combobox', { name: 'Start year' })).toHaveValue('1');
   await expect(page.getByRole('combobox', { name: 'Start month within year' })).toHaveValue('2');
   await expect(page.locator('#start-month-note')).toContainText('Loan month 2');
@@ -187,6 +207,7 @@ test('does not advertise an extra payment when the selected window cannot apply 
   await expect(page.locator('#payment-with-extras')).toHaveText('$2,528');
   await expect(page.locator('#payment-comparison')).toHaveText('The selected window applies no extra principal');
   await expect(page.locator('#interest-saved')).toHaveText('$0');
+  await expect(page.locator('#interest-saved').locator('xpath=..')).not.toHaveClass(/positive-delta/);
   await expect(page.locator('#time-saved')).toHaveText('0 mo');
 });
 

@@ -17,6 +17,8 @@
   --original: #6e7787;
   --focus: #466a97;
   --error: #a9444f;
+  --gain-ink: #3e6b00;
+  --gain-bright: #b7f34a;
   --shadow: 0 28px 80px rgba(46, 52, 64, 0.1);
   --tooltip-shadow: 0 14px 35px rgba(46, 52, 64, 0.14);
   --sticky-shadow: 0 8px 24px rgba(46, 52, 64, 0.13);
@@ -544,6 +546,18 @@ button:focus-visible {
   font-variant-numeric: tabular-nums;
 }
 
+.result-summary .positive-delta strong,
+.positive-delta-value {
+  display: inline-block;
+  width: max-content;
+  max-width: 100%;
+  color: var(--gain-ink);
+  background-image: linear-gradient(var(--gain-bright), var(--gain-bright));
+  background-repeat: no-repeat;
+  background-position: 0 88%;
+  background-size: 100% 0.18em;
+}
+
 .chart-heading {
   display: flex;
   align-items: flex-end;
@@ -885,6 +899,10 @@ button:focus-visible {
 
 #year-balance-gap {
   color: var(--accent);
+}
+
+#year-balance-gap.positive-delta-value {
+  color: var(--gain-ink);
 }
 
 .year-detail p {

@@ -285,6 +285,8 @@ import { calculateMortgage } from './mortgage-core.js';
         : 'Scheduled base payment';
 
     animateMetric(byId('interest-saved'), model.interestSaved, value => money.format(value));
+    byId('interest-saved').closest('article')
+      .classList.toggle('positive-delta', model.interestSaved > 0.005);
     animateMetric(byId('payment-with-extras'), planPayment, value => money.format(value));
     animateMetric(byId('time-saved'), model.monthsSaved, value => model.hasLoan ? shortDuration(Math.round(value)) : 'No loan');
     animateMetric(byId('monthly-payment'), model.normalPayment, value => money.format(value));
@@ -503,6 +505,7 @@ import { calculateMortgage } from './mortgage-core.js';
       byId('year-balance').textContent = 'No mortgage';
       byId('year-original-balance').textContent = 'No mortgage';
       byId('year-balance-gap').textContent = '$0';
+      byId('year-balance-gap').classList.remove('positive-delta-value');
       byId('year-interest').textContent = '$0';
       byId('year-principal').textContent = '$0';
       byId('year-interest-row').hidden = false;
@@ -524,6 +527,7 @@ import { calculateMortgage } from './mortgage-core.js';
     byId('year-balance').textContent = balanceText;
     byId('year-original-balance').textContent = money.format(originalYear.balance);
     byId('year-balance-gap').textContent = money.format(balanceDifference);
+    byId('year-balance-gap').classList.toggle('positive-delta-value', balanceDifference > 0.005);
     byId('year-interest').textContent = money.format(planYear.interest);
     byId('year-principal').textContent = money.format(planYear.principal);
     byId('year-interest-row').hidden = false;

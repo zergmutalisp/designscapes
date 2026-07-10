@@ -292,3 +292,12 @@
 - Work completed:
   - Changed the initial document theme, selected palette option, browser theme color, and focus regression to Cobalt Ledger.
   - Preserved the other three session-only palette choices and verified calculation stability, responsive behavior, and the full browser suite under the new default.
+
+## 2026-07-10
+### 13:42:02
+- Request: Apply bright lime only as a scarce signal for genuinely positive monetary deltas.
+- Assessment: Use accessible dark-lime text with a narrow neon marker on interest savings and balance reduction, while leaving payments, time, controls, balances, and chart selections in their existing theme roles.
+- Work completed:
+  - Added the positive-delta treatment only to Interest saved and Balance reduction, with labels retained as redundant semantic cues.
+  - Made the treatment conditional so zero savings and zero balance reduction automatically return to the normal theme color.
+  - Verified contrast, rendered the treatment across all four palettes and mobile, and added regressions proving other headline figures remain Cobalt.

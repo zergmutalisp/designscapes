@@ -6,8 +6,8 @@
   <meta name="description" content="See how extra mortgage payments change lifetime interest and payoff timing.">
   <meta name="theme-color" content="#f4f1ea">
   <title>Mortgage Paydown — Extra Payment Calculator</title>
-  <link rel="stylesheet" href="styles.css?v=20260710h">
-  <script type="module" src="app.js?v=20260710h"></script>
+  <link rel="stylesheet" href="styles.css?v=20260710i">
+  <script type="module" src="app.js?v=20260710i"></script>
 </head>
 <body>
   <a class="skip-link" href="#calculator">Skip to calculator</a>
@@ -46,7 +46,7 @@
 
     <section class="calculator" id="calculator" aria-label="Mortgage extra payment calculator">
       <div class="result-summary">
-        <article>
+        <article class="positive-delta">
           <p>Interest saved</p>
           <strong id="interest-saved">$286,709</strong>
           <span id="interest-comparison">$223,469 with extras · $510,178 original</span>
@@ -205,7 +205,7 @@
               </div>
               <div>
                 <dt>Balance reduction</dt>
-                <dd id="year-balance-gap">$24,424</dd>
+                <dd class="positive-delta-value" id="year-balance-gap">$24,424</dd>
               </div>
               <div id="year-interest-row">
                 <dt>Plan interest this year</dt>
