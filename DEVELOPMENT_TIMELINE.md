@@ -319,3 +319,12 @@
   - Rebuilt the hover, click, and drag readout as a seven-row keyed display for both balances, balance reduction, interest, interest avoided, regular principal, and extra principal.
   - Matched the tooltip keys to the chart's solid plan line, dashed original line, terracotta interest, slate principal, and hatched teal extra-principal encoding across all four themes.
   - Verified representative Year 8 values against the amortization model, inspected the rendered desktop result, and added browser regressions for labels, values, colors, line styles, and hatch pattern.
+
+## 2026-07-10
+### 14:53:23
+- Request: Bring the desktop chart's tap, drag-preview, release-to-commit, and outside-to-cancel interaction to the mobile mortgage calculator.
+- Assessment: Adapt direct manipulation for touch by separating horizontal scrubbing from vertical page scrolling, keeping the slider as the accessible control, and moving exact preview values into the existing inspector rather than obscuring the chart with a large tooltip.
+- Work completed:
+  - Added mobile tap selection and thresholded horizontal touch scrubbing with a moving preview band, compact year marker, live inspector values, release-to-commit behavior, and out-of-bounds cancellation.
+  - Preserved vertical scrolling with touch-action and directional gesture detection, and kept preview changes separate from committed slider state until release.
+  - Added chart-matched line, color, and hatch keys to the persistent inspector and verified representative values, narrow-phone layout, desktop layout, overflow, console output, and all gesture paths in browser tests.

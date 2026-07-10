@@ -458,6 +458,7 @@ import { calculateMortgage } from './mortgage-core.js';
     chartLayout = {
       width,
       height,
+      compact,
       plotLeft,
       plotRight,
       paymentTop,
@@ -475,14 +476,6 @@ import { calculateMortgage } from './mortgage-core.js';
           if (chartDrag) return;
           showTooltip(Number(hit.dataset.year));
         });
-        hit.addEventListener('pointerdown', beginChartDrag);
-        hit.addEventListener('click', event => {
-          if (event.pointerType === 'mouse') return;
-          const year = Number(hit.dataset.year);
-          selectYear(year);
-          showTooltip(year);
-          updateYearDetail(true);
-        });
       });
     }
   }
@@ -493,12 +486,36 @@ import { calculateMortgage } from './mortgage-core.js';
     renderChart();
   }
 
-  function updateYearDetail(announce = false) {
+  function setYearDetailNote(items, fallback) {
+    const note = byId('year-detail-note');
+    if (!items.length) {
+      note.textContent = fallback;
+      return;
+    }
+
+    note.replaceChildren();
+    items.forEach((item, index) => {
+      if (index) note.append(document.createTextNode(' · '));
+      const part = document.createElement('span');
+      part.className = 'year-note-item';
+      if (item.keyClass) {
+        const key = document.createElement('i');
+        key.className = `detail-key ${item.keyClass}`;
+        key.setAttribute('aria-hidden', 'true');
+        part.append(key);
+      }
+      part.append(document.createTextNode(item.text));
+      note.append(part);
+    });
+  }
+
+  function updateYearDetail(announce = false, requestedYear = Number(inspectYear.value), preview = false) {
     if (!model) return;
-    const index = Number(inspectYear.value) - 1;
-    const yearNumber = index + 1;
+    const yearNumber = clamp(requestedYear, 1, 30);
+    const index = yearNumber - 1;
     const planYear = model.plan.years[index];
     const originalYear = model.original.years[index];
+    byId('year-detail').classList.toggle('is-previewing', preview);
     if (!model.hasLoan) {
       byId('inspect-year-output').textContent = 'No mortgage';
       inspectYear.setAttribute('aria-valuetext', 'No mortgage balance to inspect');
@@ -522,8 +539,10 @@ import { calculateMortgage } from './mortgage-core.js';
     const afterPayoff = yearNumber > payoffYear;
     const balanceText = paidOff ? 'Paid off' : money.format(planYear.balance);
 
-    byId('inspect-year-output').textContent = `Year ${yearNumber}`;
-    inspectYear.setAttribute('aria-valuetext', `Mortgage year ${yearNumber}, ${balanceText} with extras, ${money.format(originalYear.balance)} on the original schedule, ${money.format(balanceDifference)} balance reduction`);
+    byId('inspect-year-output').textContent = preview ? `Previewing Year ${yearNumber}` : `Year ${yearNumber}`;
+    if (!preview) {
+      inspectYear.setAttribute('aria-valuetext', `Mortgage year ${yearNumber}, ${balanceText} with extras, ${money.format(originalYear.balance)} on the original schedule, ${money.format(balanceDifference)} balance reduction`);
+    }
     byId('year-balance').textContent = balanceText;
     byId('year-original-balance').textContent = money.format(originalYear.balance);
     byId('year-balance-gap').textContent = money.format(balanceDifference);
@@ -534,14 +553,23 @@ import { calculateMortgage } from './mortgage-core.js';
     byId('year-principal-row').hidden = false;
 
     const details = [];
-    if (afterPayoff) details.push(`Loan paid off in Year ${payoffYear}`);
-    if (paidOff && !afterPayoff) details.push(`Loan paid off during Year ${payoffYear}`);
-    if (planYear.extraPrincipal > 0.005) details.push(`Includes ${money.format(planYear.extraPrincipal)} extra principal`);
-    if (interestDifference > 0.005) details.push(`${money.format(interestDifference)} interest avoided this year`);
-    const note = details.length ? details.join(' · ') : 'No extra principal or interest reduction this year.';
-    byId('year-detail-note').textContent = note;
+    if (afterPayoff) details.push({ text: `Loan paid off in Year ${payoffYear}` });
+    if (paidOff && !afterPayoff) details.push({ text: `Loan paid off during Year ${payoffYear}` });
+    if (planYear.extraPrincipal > 0.005) {
+      details.push({
+        keyClass: 'detail-block detail-extra',
+        text: `Includes ${money.format(planYear.extraPrincipal)} extra principal`
+      });
+    }
+    if (interestDifference > 0.005) {
+      details.push({
+        keyClass: 'detail-dot detail-delta',
+        text: `${money.format(interestDifference)} interest avoided this year`
+      });
+    }
+    setYearDetailNote(details, 'No extra principal or interest reduction this year.');
 
-    if (announce) {
+    if (announce && !preview) {
       byId('year-detail-status').textContent = `Year ${yearNumber}. ${balanceText} with extras, ${money.format(originalYear.balance)} on the original schedule, ${money.format(balanceDifference)} balance reduction. ${money.format(interestDifference)} interest avoided this year.`;
     }
   }
@@ -572,63 +600,129 @@ import { calculateMortgage } from './mortgage-core.js';
     return index + 1;
   }
 
-  function hideDragPreview() {
+  function hideDragPreview(restoreDetail = false) {
     chart.querySelector('.drag-preview-band')?.classList.remove('is-visible');
     chartShell.classList.remove('is-drag-outside');
+    chartShell.classList.remove('is-touch-preview');
+    tooltip.classList.remove('is-touch-marker');
+    tooltip.removeAttribute('aria-hidden');
     tooltip.hidden = true;
+    if (restoreDetail) updateYearDetail();
   }
 
   function showDragPreview(year) {
     const band = chart.querySelector('.drag-preview-band');
     const readout = year === null ? null : tooltipReadout(year);
+    const touchMode = Boolean(chartDrag?.touchMode);
     if (!band || !chartLayout || !readout) {
       band?.classList.remove('is-visible');
       chartShell.classList.add('is-drag-outside');
+      chartShell.classList.remove('is-touch-preview');
+      tooltip.classList.remove('is-touch-marker');
       tooltip.hidden = true;
+      if (touchMode) {
+        updateYearDetail();
+        byId('inspect-year-output').textContent = 'Release outside to cancel';
+      }
       return;
     }
 
     chartShell.classList.remove('is-drag-outside');
     band.setAttribute('x', String(chartLayout.plotLeft + chartLayout.step * (year - 1)));
     band.classList.add('is-visible');
-    tooltip.innerHTML = `
-      <span class="drag-cancel">(Drag outside the chart to cancel.)</span>
-      <strong>Release to inspect Year ${year}</strong>
-      ${readout.html}
-    `;
+    chartShell.classList.toggle('is-touch-preview', touchMode);
+
+    if (touchMode) {
+      updateYearDetail(false, year, true);
+      tooltip.classList.add('is-touch-marker');
+      tooltip.setAttribute('aria-hidden', 'true');
+      tooltip.innerHTML = `<strong>Year ${year}</strong>`;
+    } else {
+      tooltip.classList.remove('is-touch-marker');
+      tooltip.removeAttribute('aria-hidden');
+      tooltip.innerHTML = `
+        <span class="drag-cancel">(Drag outside the chart to cancel.)</span>
+        <strong>Release to inspect Year ${year}</strong>
+        ${readout.html}
+      `;
+    }
     tooltip.hidden = false;
 
     requestAnimationFrame(() => {
       const bounds = tooltip.getBoundingClientRect();
       const center = chartLayout.positions[year - 1].x;
       tooltip.style.left = `${clamp(center - bounds.width / 2, 8, chartLayout.width - bounds.width - 8)}px`;
-      tooltip.style.top = '8px';
+      tooltip.style.top = touchMode ? `${chartLayout.paymentTop + 6}px` : '8px';
     });
   }
 
-  function clearChartDrag() {
+  function clearChartDrag({ restoreDetail = true } = {}) {
     if (!chartDrag) return;
+    const restoreTouchDetail = restoreDetail && chartDrag.touchMode;
     const pointerId = chartDrag.pointerId;
     chartDrag = null;
     chartShell.classList.remove('is-dragging');
-    hideDragPreview();
-    if (chart.hasPointerCapture?.(pointerId)) chart.releasePointerCapture(pointerId);
+    hideDragPreview(restoreTouchDetail);
+    try {
+      if (chart.hasPointerCapture?.(pointerId)) chart.releasePointerCapture(pointerId);
+    } catch {
+      // The browser may already have released a touch pointer to vertical scrolling.
+    }
   }
 
   function beginChartDrag(event) {
-    if (event.pointerType !== 'mouse' || event.button !== 0 || !event.isPrimary) return;
+    const isMouse = event.pointerType === 'mouse';
+    if (!event.isPrimary || (isMouse && event.button !== 0)) return;
     const year = yearAtPointer(event);
     if (year === null) return;
-    event.preventDefault();
     tooltip.hidden = true;
-    chartDrag = { pointerId: event.pointerId, candidateYear: year };
+    chartDrag = {
+      pointerId: event.pointerId,
+      candidateYear: year,
+      mode: isMouse ? 'active' : 'pending',
+      touchMode: !isMouse || chartLayout.compact,
+      startX: event.clientX,
+      startY: event.clientY
+    };
+
+    if (!isMouse) return;
+
+    event.preventDefault();
     chartShell.classList.add('is-dragging');
-    chart.setPointerCapture?.(event.pointerId);
+    try {
+      chart.setPointerCapture?.(event.pointerId);
+    } catch {
+      // Synthetic and interrupted pointers may not be capturable.
+    }
     showDragPreview(year);
   }
 
   function moveChartDrag(event) {
     if (!chartDrag || event.pointerId !== chartDrag.pointerId) return;
+    if (chartDrag.mode === 'pending') {
+      const dx = event.clientX - chartDrag.startX;
+      const dy = event.clientY - chartDrag.startY;
+      if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+      if (Math.abs(dy) > Math.abs(dx)) {
+        clearChartDrag();
+        return;
+      }
+
+      chartDrag.mode = 'active';
+      chartShell.classList.add('is-dragging');
+      try {
+        chart.setPointerCapture?.(event.pointerId);
+      } catch {
+        // The gesture can continue without capture while it remains in bounds.
+      }
+      event.preventDefault();
+      const activationYear = yearAtPointer(event);
+      chartDrag.candidateYear = activationYear;
+      showDragPreview(activationYear);
+      return;
+    }
+
+    if (chartDrag.touchMode) event.preventDefault();
     const year = yearAtPointer(event);
     if (year === chartDrag.candidateYear) return;
     chartDrag.candidateYear = year;
@@ -637,11 +731,16 @@ import { calculateMortgage } from './mortgage-core.js';
 
   function commitChartDrag(event) {
     if (!chartDrag || event.pointerId !== chartDrag.pointerId) return;
+    const drag = chartDrag;
     const year = yearAtPointer(event);
-    clearChartDrag();
+    clearChartDrag({ restoreDetail: year === null });
     if (year === null) return;
     selectYear(year);
-    showTooltip(year);
+    if (drag.touchMode) {
+      tooltip.hidden = true;
+    } else {
+      showTooltip(year);
+    }
     updateYearDetail(true);
   }
 
@@ -696,6 +795,8 @@ import { calculateMortgage } from './mortgage-core.js';
     const readout = tooltipReadout(year);
     if (!readout) return;
 
+    tooltip.classList.remove('is-touch-marker');
+    tooltip.removeAttribute('aria-hidden');
     tooltip.innerHTML = `
       <strong>Year ${year}</strong>
       ${readout.html}
@@ -828,6 +929,7 @@ import { calculateMortgage } from './mortgage-core.js';
     if (!chartDrag) tooltip.hidden = true;
   });
 
+  chart.addEventListener('pointerdown', beginChartDrag);
   chart.addEventListener('pointermove', moveChartDrag);
   chart.addEventListener('pointerup', commitChartDrag);
   chart.addEventListener('pointercancel', cancelChartDrag);

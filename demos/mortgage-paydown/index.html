@@ -6,8 +6,8 @@
   <meta name="description" content="See how extra mortgage payments change lifetime interest and payoff timing.">
   <meta name="theme-color" content="#f4f1ea">
   <title>Mortgage Paydown — Extra Payment Calculator</title>
-  <link rel="stylesheet" href="styles.css?v=20260710k">
-  <script type="module" src="app.js?v=20260710k"></script>
+  <link rel="stylesheet" href="styles.css?v=20260710l">
+  <script type="module" src="app.js?v=20260710l"></script>
 </head>
 <body>
   <a class="skip-link" href="#calculator">Skip to calculator</a>
@@ -185,7 +185,7 @@
           <span><i class="legend-line original"></i>Original balance</span>
         </div>
 
-        <p class="mobile-chart-hint">Use the year control below to inspect the chart on a phone.</p>
+        <p class="mobile-chart-hint">Tap or drag across the chart to inspect a year. Swipe vertically to scroll.</p>
 
         <div class="year-inspector">
           <div class="inspector-heading">
@@ -196,23 +196,23 @@
           <div class="year-detail" id="year-detail">
             <dl>
               <div class="year-detail-primary">
-                <dt>Balance with extras</dt>
+                <dt><i class="detail-key detail-line detail-line-plan" aria-hidden="true"></i>Balance with extras</dt>
                 <dd id="year-balance">$366,335</dd>
               </div>
               <div>
-                <dt>Original balance</dt>
+                <dt><i class="detail-key detail-line detail-line-original" aria-hidden="true"></i>Original balance</dt>
                 <dd id="year-original-balance">$390,759</dd>
               </div>
               <div>
-                <dt>Balance reduction</dt>
+                <dt><i class="detail-key detail-dot detail-delta" aria-hidden="true"></i>Balance reduction</dt>
                 <dd class="positive-delta-value" id="year-balance-gap">$24,424</dd>
               </div>
               <div id="year-interest-row">
-                <dt>Plan interest this year</dt>
+                <dt><i class="detail-key detail-block detail-interest" aria-hidden="true"></i>Plan interest this year</dt>
                 <dd id="year-interest">$24,448</dd>
               </div>
               <div id="year-principal-row">
-                <dt>Plan principal this year</dt>
+                <dt><span class="detail-key-group" aria-hidden="true"><i class="detail-key detail-block detail-principal"></i><i class="detail-key detail-block detail-extra"></i></span>Plan principal this year</dt>
                 <dd id="year-principal">$17,891</dd>
               </div>
             </dl>

@@ -598,6 +598,7 @@ button:focus-visible {
   width: 100%;
   height: 100%;
   overflow: visible;
+  touch-action: pan-y;
 }
 
 #paydown-chart .axis-text,
@@ -700,6 +701,11 @@ button:focus-visible {
   font-size: 11px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
+  transition: opacity 120ms ease;
+}
+
+.chart-shell.is-touch-preview #paydown-chart .selected-reading {
+  opacity: 0;
 }
 
 #paydown-chart .empty-state-title,
@@ -842,6 +848,20 @@ button:focus-visible {
   line-height: 1.3;
 }
 
+.chart-tooltip.is-touch-marker {
+  width: auto;
+  padding: 0.36rem 0.58rem;
+  border-color: var(--accent);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.chart-tooltip.is-touch-marker strong {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.72rem;
+}
+
 .chart-legend {
   display: flex;
   flex-wrap: wrap;
@@ -923,6 +943,12 @@ button:focus-visible {
   border: 1px solid var(--line);
   border-radius: 14px;
   background: var(--surface-strong);
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.year-detail.is-previewing {
+  border-color: var(--accent);
+  box-shadow: inset 3px 0 0 var(--accent);
 }
 
 .year-detail dl {
@@ -945,8 +971,70 @@ button:focus-visible {
 }
 
 .year-detail dt {
+  display: flex;
+  align-items: center;
+  gap: 0.38rem;
   color: var(--muted);
   font-size: 0.72rem;
+}
+
+.detail-key,
+.detail-key-group {
+  flex: 0 0 auto;
+}
+
+.detail-key-group {
+  display: inline-flex;
+  gap: 1px;
+}
+
+.detail-key {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+}
+
+.detail-line {
+  width: 14px;
+  height: 0;
+  border-top: 2px solid;
+  border-radius: 0;
+}
+
+.detail-line-plan {
+  border-color: var(--accent);
+}
+
+.detail-line-original {
+  border-color: var(--original);
+  border-top-style: dashed;
+}
+
+.detail-dot {
+  width: 7px;
+  height: 7px;
+  margin-inline: 3.5px;
+  border-radius: 50%;
+}
+
+.detail-delta {
+  background: var(--gain-ink);
+}
+
+.detail-interest {
+  background: var(--interest);
+}
+
+.detail-principal {
+  width: 7px;
+  background: var(--principal);
+}
+
+.detail-extra {
+  width: 7px;
+  background-color: var(--extra);
+  background-image: repeating-linear-gradient(45deg, transparent 0 3px, rgba(255, 255, 255, 0.72) 3px 4px);
 }
 
 .year-detail dd {
@@ -978,6 +1066,12 @@ button:focus-visible {
   color: var(--muted);
   font-size: 0.7rem;
   line-height: 1.5;
+}
+
+.year-note-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
 }
 
 .method {
@@ -1312,7 +1406,7 @@ footer p {
   }
 
   #paydown-chart .year-hit {
-    pointer-events: none;
+    pointer-events: all;
   }
 
   .mobile-chart-hint {

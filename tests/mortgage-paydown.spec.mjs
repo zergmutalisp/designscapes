@@ -230,6 +230,92 @@ test('previews a dragged year and commits only when released inside the plot', a
   await expect(page.locator('#inspect-year-output')).toHaveText('Year 11');
 });
 
+test('supports tap and horizontal touch scrubbing without taking over vertical mobile scroll', async ({ page }) => {
+  await openCalculator(page, { width: 390, height: 844 });
+
+  const chart = page.locator('#paydown-chart');
+  const inspector = page.getByRole('slider', { name: 'Inspect year' });
+  const tooltip = page.locator('#chart-tooltip');
+  const previewBand = page.locator('.drag-preview-band');
+  const yearEightBox = await page.locator('.year-hit[data-year="8"]').boundingBox();
+  const yearElevenBox = await page.locator('.year-hit[data-year="11"]').boundingBox();
+  const chartBox = await chart.boundingBox();
+  const point = box => ({
+    x: box.x + box.width / 2,
+    y: box.y + box.height / 2
+  });
+  const yearEight = point(yearEightBox);
+  const yearEleven = point(yearElevenBox);
+  const dispatchPointer = (type, pointerId, location, buttons = 1) => page.dispatchEvent('#paydown-chart', type, {
+    pointerId,
+    pointerType: 'touch',
+    isPrimary: true,
+    button: 0,
+    buttons,
+    clientX: location.x,
+    clientY: location.y
+  });
+
+  await expect(page.locator('.mobile-chart-hint')).toContainText('Tap or drag');
+  await expect(chart).toHaveCSS('touch-action', 'pan-y');
+
+  await dispatchPointer('pointerdown', 71, yearEight);
+  await dispatchPointer('pointermove', 71, { x: yearEight.x + 2, y: yearEight.y + 24 });
+  await dispatchPointer('pointerup', 71, { x: yearEight.x + 2, y: yearEight.y + 24 }, 0);
+  await expect(inspector).toHaveValue('2');
+  await expect(page.locator('#inspect-year-output')).toHaveText('Year 2');
+  await expect(previewBand).not.toHaveClass(/is-visible/);
+
+  await dispatchPointer('pointerdown', 72, yearEight);
+  await dispatchPointer('pointerup', 72, yearEight, 0);
+  await expect(inspector).toHaveValue('8');
+  await expect(page.locator('#inspect-year-output')).toHaveText('Year 8');
+
+  await dispatchPointer('pointerdown', 73, yearEight);
+  await dispatchPointer('pointermove', 73, yearEleven);
+  await expect(inspector).toHaveValue('8');
+  await expect(page.locator('#inspect-year-output')).toHaveText('Previewing Year 11');
+  await expect(page.locator('#year-detail')).toHaveClass(/is-previewing/);
+  await expect(page.locator('#year-balance')).toHaveText('$140,539');
+  await expect(page.locator('#year-original-balance')).toHaveText('$330,555');
+  await expect(page.locator('#year-principal')).toHaveText('$32,064');
+  await expect(tooltip).toHaveClass(/is-touch-marker/);
+  await expect(tooltip).toContainText('Year 11');
+  await expect(tooltip).toHaveAttribute('aria-hidden', 'true');
+  await expect(previewBand).toHaveClass(/is-visible/);
+
+  await dispatchPointer('pointerup', 73, yearEleven, 0);
+  await expect(inspector).toHaveValue('11');
+  await expect(page.locator('#inspect-year-output')).toHaveText('Year 11');
+  await expect(page.locator('#year-detail')).not.toHaveClass(/is-previewing/);
+  await expect(tooltip).toBeHidden();
+
+  await dispatchPointer('pointerdown', 74, yearEleven);
+  await dispatchPointer('pointermove', 74, { x: chartBox.x + chartBox.width + 16, y: yearEleven.y });
+  await expect(page.locator('#inspect-year-output')).toHaveText('Release outside to cancel');
+  await expect(previewBand).not.toHaveClass(/is-visible/);
+  await dispatchPointer('pointerup', 74, { x: chartBox.x + chartBox.width + 16, y: yearEleven.y }, 0);
+  await expect(inspector).toHaveValue('11');
+  await expect(page.locator('#inspect-year-output')).toHaveText('Year 11');
+
+  const detailKeys = await page.locator('#year-detail').evaluate(element => ({
+    planLine: getComputedStyle(element.querySelector('.detail-line-plan')).borderTopColor,
+    originalStyle: getComputedStyle(element.querySelector('.detail-line-original')).borderTopStyle,
+    delta: getComputedStyle(element.querySelector('.detail-delta')).backgroundColor,
+    interest: getComputedStyle(element.querySelector('.detail-interest')).backgroundColor,
+    principal: getComputedStyle(element.querySelector('.detail-principal')).backgroundColor,
+    extraPattern: getComputedStyle(element.querySelector('.detail-extra')).backgroundImage
+  }));
+  expect(detailKeys).toEqual({
+    planLine: 'rgb(49, 92, 155)',
+    originalStyle: 'dashed',
+    delta: 'rgb(62, 107, 0)',
+    interest: 'rgb(183, 92, 62)',
+    principal: 'rgb(62, 72, 87)',
+    extraPattern: expect.stringContaining('repeating-linear-gradient')
+  });
+});
+
 test('does not advertise an extra payment when the selected window cannot apply one', async ({ page }) => {
   await openCalculator(page);
 
