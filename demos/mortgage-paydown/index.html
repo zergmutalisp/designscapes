@@ -6,8 +6,8 @@
   <meta name="description" content="See how extra mortgage payments change lifetime interest and payoff timing.">
   <meta name="theme-color" content="#f2efe7">
   <title>Mortgage Paydown — Extra Payment Calculator</title>
-  <link rel="stylesheet" href="styles.css?v=20260709f">
-  <script type="module" src="app.js?v=20260710a"></script>
+  <link rel="stylesheet" href="styles.css?v=20260710b">
+  <script type="module" src="app.js?v=20260710b"></script>
 </head>
 <body>
   <a class="skip-link" href="#calculator">Skip to calculator</a>
@@ -43,15 +43,21 @@
           <span id="interest-comparison">$242,250 with extras · $510,178 original</span>
         </article>
         <article>
-          <p>Monthly with extras</p>
+          <p id="payment-summary-label">Payment in extra months</p>
           <strong id="payment-with-extras">$3,528</strong>
-          <span id="payment-comparison">$2,528 base P&amp;I · $172,000 extra principal contributed</span>
+          <span id="payment-comparison">$2,528 base P&amp;I · up to $1,000 extra · $172,000 extra total</span>
         </article>
         <article>
           <p>Time saved</p>
           <strong id="time-saved">14 yr 6 mo</strong>
           <span id="payoff-comparison">15 years 6 months with extras · 30 years original</span>
         </article>
+      </div>
+
+      <div class="mobile-summary-context" aria-label="Plan comparison details">
+        <p><strong>Interest comparison</strong><span id="interest-comparison-mobile">$242,250 with extras · $510,178 original</span></p>
+        <p><strong>Payment details</strong><span id="payment-comparison-mobile">$2,528 base P&amp;I · up to $1,000 extra · $172,000 extra total</span></p>
+        <p><strong>Payoff comparison</strong><span id="payoff-comparison-mobile">15 years 6 months with extras · 30 years original</span></p>
       </div>
 
       <aside class="controls" aria-label="Calculator inputs">
@@ -63,10 +69,11 @@
               <label for="home-price-number">Home price</label>
               <div class="number-control currency-control">
                 <span aria-hidden="true">$</span>
-                <input id="home-price-number" type="number" min="100000" max="2000000" step="2500" value="500000" inputmode="numeric" aria-label="Home price in dollars">
+                <input id="home-price-number" type="number" min="100000" max="2000000" step="2500" value="500000" inputmode="numeric" aria-label="Home price in dollars" aria-describedby="home-price-error">
               </div>
             </div>
             <input id="home-price-range" type="range" min="100000" max="2000000" step="2500" value="500000" aria-label="Home price">
+            <p class="field-error" id="home-price-error" role="alert" hidden></p>
           </div>
 
           <div class="field">
@@ -74,22 +81,24 @@
               <label for="down-payment-number">Down payment</label>
               <div class="number-control currency-control">
                 <span aria-hidden="true">$</span>
-                <input id="down-payment-number" type="number" min="0" max="500000" step="1" value="100000" inputmode="numeric" aria-label="Down payment in dollars">
+                <input id="down-payment-number" type="number" min="0" max="500000" step="1" value="100000" inputmode="numeric" aria-label="Down payment in dollars" aria-describedby="down-payment-note down-payment-error">
               </div>
             </div>
             <input id="down-payment-range" type="range" min="0" max="100" step="1" value="20" aria-label="Down payment percentage">
             <p class="field-note" id="down-payment-note"></p>
+            <p class="field-error" id="down-payment-error" role="alert" hidden></p>
           </div>
 
           <div class="field">
             <div class="field-heading">
               <label for="interest-rate-range">Interest rate</label>
               <div class="number-control suffix-control">
-                <input id="interest-rate-number" type="number" min="2" max="10" step="0.05" value="6.5" inputmode="decimal" aria-label="Annual interest rate percentage">
+                <input id="interest-rate-number" type="number" min="2" max="10" step="0.05" value="6.5" inputmode="decimal" aria-label="Annual interest rate percentage" aria-describedby="interest-rate-error">
                 <span aria-hidden="true">%</span>
               </div>
             </div>
             <input id="interest-rate-range" type="range" min="2" max="10" step="0.05" value="6.5">
+            <p class="field-error" id="interest-rate-error" role="alert" hidden></p>
           </div>
         </fieldset>
 
@@ -101,10 +110,11 @@
               <label for="extra-payment-range">Monthly extra</label>
               <div class="number-control currency-control">
                 <span aria-hidden="true">$</span>
-                <input id="extra-payment-number" type="number" min="0" max="30000" step="100" value="1000" inputmode="numeric" aria-label="Extra monthly payment in dollars">
+                <input id="extra-payment-number" type="number" min="0" max="30000" step="100" value="1000" inputmode="numeric" aria-label="Extra monthly payment in dollars" aria-describedby="extra-payment-error">
               </div>
             </div>
             <input id="extra-payment-range" type="range" min="0" max="30000" step="100" value="1000">
+            <p class="field-error" id="extra-payment-error" role="alert" hidden></p>
           </div>
 
           <div class="field">
@@ -138,7 +148,10 @@
           </div>
         </fieldset>
 
-        <p class="control-footnote">Extra payments are applied directly to principal after the scheduled monthly payment.</p>
+        <div class="control-footer">
+          <p class="control-footnote">Extras are applied after the scheduled payment; regular principal and interest is not recast.</p>
+          <button class="reset-button" id="reset-calculator" type="button">Reset defaults</button>
+        </div>
       </aside>
 
       <div class="results">
@@ -174,15 +187,23 @@
           <div class="year-detail" id="year-detail">
             <dl>
               <div class="year-detail-primary">
-                <dt>Remaining balance</dt>
+                <dt>Balance with extras</dt>
                 <dd id="year-balance">$379,456</dd>
               </div>
+              <div>
+                <dt>Original balance</dt>
+                <dd id="year-original-balance">$390,759</dd>
+              </div>
+              <div>
+                <dt>Balance reduction</dt>
+                <dd id="year-balance-gap">$11,303</dd>
+              </div>
               <div id="year-interest-row">
-                <dt>Interest this year</dt>
+                <dt>Plan interest this year</dt>
                 <dd id="year-interest">$25,266</dd>
               </div>
               <div id="year-principal-row">
-                <dt>Principal this year</dt>
+                <dt>Plan principal this year</dt>
                 <dd id="year-principal">$16,073</dd>
               </div>
             </dl>
@@ -204,16 +225,16 @@
       </div>
       <dl>
         <div>
-          <dt>Fixed-rate loan</dt>
-          <dd>Interest accrues monthly on the remaining principal over a 30-year term.</dd>
+          <dt>Fixed rate, no recast</dt>
+          <dd>Principal and interest stay on the original 30-year schedule; this estimate does not recast the regular payment after extras.</dd>
         </div>
         <div>
-          <dt>Extras reduce principal</dt>
-          <dd>Additional payments do not replace the normal payment and stop when the loan is paid off.</dd>
+          <dt>Lender handling varies</dt>
+          <dd>Extras are applied after the scheduled payment. Lender rounding, payment order, recasting, and prepayment rules can change the result slightly.</dd>
         </div>
         <div>
-          <dt>Housing costs excluded</dt>
-          <dd>Taxes, homeowners insurance, mortgage insurance or PMI, HOA fees, closing costs, and prepayment penalties are not included.</dd>
+          <dt>Estimate scope</dt>
+          <dd>Taxes, insurance, fees, tax effects, and alternative uses of the extra cash are excluded. Results are based only on your inputs.</dd>
         </div>
       </dl>
     </section>

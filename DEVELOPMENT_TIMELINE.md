@@ -221,3 +221,12 @@
   - Fixed direct replacement and exact-dollar entry for the extra-payment field, including matching behavior for the interest-rate number field.
   - Changed the default extra-payment start to Year 2, Month 2 and refreshed the savings, payoff, yearly detail, gallery preview, and regression expectations.
   - Passed six mortgage calculation tests and verified select-all replacement, default picker state, updated results, and zero horizontal overflow at desktop and phone sizes.
+
+## 2026-07-10
+### 01:41:27
+- Request: Implement every mortgage visualization audit recommendation and retune the calculator's color system.
+- Assessment: Correct misleading edge states first, then restore exact comparison context, strengthen accessibility and responsive behavior, and adopt a restrained evergreen, teal, ochre, and charcoal palette with redundant chart cues.
+- Work completed:
+  - Added applicable-payment and no-mortgage states, inline validation, reset recovery, synchronized chart updates, richer financial caveats, and exact original-versus-plan yearly comparisons.
+  - Restored mobile comparison context and desktop inspector values, removed 320px overflow, retained the flattened single-screen desktop composition, and strengthened focus, control, and chart differentiation.
+  - Added eight calculation tests and six Playwright desktop/mobile regressions covering edge windows, 100% down, validation, keyboard inspection, reset behavior, and maximum-value narrow screens.

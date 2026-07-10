@@ -4,12 +4,21 @@ import { calculateMortgage } from './mortgage-core.js';
   'use strict';
 
   const byId = id => document.getElementById(id);
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const chart = byId('paydown-chart');
   const chartShell = byId('chart-shell');
   const tooltip = byId('chart-tooltip');
   const inspectYear = byId('inspect-year');
   const calculationStatus = byId('calculation-status');
+  const resetButton = byId('reset-calculator');
+  const defaults = {
+    price: 500000,
+    downPayment: 100000,
+    rate: 6.5,
+    extra: 1000,
+    startMonth: 14,
+    endMonth: 360,
+    inspectYear: 2
+  };
   const pickers = {
     startYear: byId('start-year'),
     startMonth: byId('start-month-in-year'),
@@ -36,6 +45,19 @@ import { calculateMortgage } from './mortgage-core.js';
     }
   };
 
+  const inputErrors = {
+    price: byId('home-price-error'),
+    down: byId('down-payment-error'),
+    rate: byId('interest-rate-error'),
+    extra: byId('extra-payment-error')
+  };
+  const lastValidNumbers = {
+    price: defaults.price,
+    down: defaults.downPayment,
+    rate: defaults.rate,
+    extra: defaults.extra
+  };
+
   const money = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -45,11 +67,9 @@ import { calculateMortgage } from './mortgage-core.js';
     maximumFractionDigits: 2
   });
 
-  const metricAnimations = new Map();
   let model = null;
   let displayedPlan = [];
   let displayedOriginal = [];
-  let chartAnimation = 0;
   let chartLayout = null;
   let statusTimer = 0;
   let downInputMode = 'percent';
@@ -79,6 +99,35 @@ import { calculateMortgage } from './mortgage-core.js';
       : clamp(value, Number(pair.number.min), Number(pair.number.max));
     pair.range.value = String(normalized);
     pair.number.value = String(normalized);
+  }
+
+  function inputRangeLabel(key) {
+    const input = pairs[key].number;
+    if (key === 'rate') return `${input.min}%–${input.max}%`;
+    return `${money.format(Number(input.min))}–${money.format(Number(input.max))}`;
+  }
+
+  function setInputError(key, message = '') {
+    const input = pairs[key].number;
+    const error = inputErrors[key];
+    input.setAttribute('aria-invalid', message ? 'true' : 'false');
+    error.textContent = message;
+    error.hidden = !message;
+  }
+
+  function validateNumberInput(key) {
+    const input = pairs[key].number;
+    const value = Number(input.value);
+    if (input.value === '' || !Number.isFinite(value)) {
+      setInputError(key, `Enter a value from ${inputRangeLabel(key)}. Results still use the last valid amount.`);
+      return false;
+    }
+    if (value < Number(input.min) || value > Number(input.max)) {
+      setInputError(key, `Enter a value from ${inputRangeLabel(key)}. Results still use the last valid amount.`);
+      return false;
+    }
+    setInputError(key);
+    return true;
   }
 
   function syncDownFromPercent(value) {
@@ -174,11 +223,11 @@ import { calculateMortgage } from './mortgage-core.js';
 
   function readState() {
     return {
-      price: Number(pairs.price.number.value),
+      price: lastValidNumbers.price,
       downPercent: Number(pairs.down.range.value),
-      downPayment: Number(pairs.down.number.value),
-      annualRate: Number(pairs.rate.number.value) / 100,
-      extraAmount: Number(pairs.extra.number.value),
+      downPayment: lastValidNumbers.down,
+      annualRate: lastValidNumbers.rate / 100,
+      extraAmount: lastValidNumbers.extra,
       startMonth: pickerMonth('start'),
       endMonth: pickerMonth('end')
     };
@@ -189,63 +238,72 @@ import { calculateMortgage } from './mortgage-core.js';
   }
 
   function animateMetric(element, endValue, formatter) {
-    if (metricAnimations.has(element)) cancelAnimationFrame(metricAnimations.get(element));
-    const startValue = Number(element.dataset.metricValue ?? endValue);
-
-    if (reduceMotion.matches || startValue === endValue) {
-      element.dataset.metricValue = String(endValue);
-      element.textContent = formatter(endValue);
-      return;
-    }
-
-    const started = performance.now();
-    const run = now => {
-      const raw = Math.min(1, (now - started) / 340);
-      const progress = 1 - Math.pow(1 - raw, 3);
-      const current = startValue + (endValue - startValue) * progress;
-      element.dataset.metricValue = String(current);
-      element.textContent = formatter(current);
-      if (raw < 1) {
-        metricAnimations.set(element, requestAnimationFrame(run));
-      } else {
-        element.dataset.metricValue = String(endValue);
-        element.textContent = formatter(endValue);
-        metricAnimations.delete(element);
-      }
-    };
-
-    metricAnimations.set(element, requestAnimationFrame(run));
+    element.dataset.metricValue = String(endValue);
+    element.textContent = formatter(endValue);
   }
 
   function updateText() {
+    const hasApplicableExtra = model.hasLoan && model.plan.totalExtra > 0.005;
+    const planPayment = !model.hasLoan
+      ? 0
+      : hasApplicableExtra
+        ? model.plan.maxPaymentWithExtra
+        : model.normalPayment;
+    const interestComparison = model.hasLoan
+      ? `${money.format(model.plan.totalInterest)} with extras · ${money.format(model.original.totalInterest)} original`
+      : 'No mortgage balance; the price is fully covered by the down payment';
+    const paymentComparison = !model.hasLoan
+      ? 'No mortgage balance to repay'
+      : hasApplicableExtra
+        ? `${money.format(model.normalPayment)} base P&I · up to ${money.format(model.plan.maxExtraPayment)} extra · ${money.format(model.plan.totalExtra)} extra total`
+        : 'The selected window applies no extra principal';
+    const payoffComparison = !model.hasLoan
+      ? 'No mortgage balance to repay'
+      : model.monthsSaved
+        ? `${duration(model.plan.payoffMonth)} with extras · 30 years original`
+        : 'The extra-payment plan does not change the payoff time';
+
     byId('down-payment-note').textContent = `${percent.format(model.downPercent)}% down · ${money.format(model.principal)} financed`;
     byId('start-month-note').textContent = `Loan month ${model.startMonth} · ${monthPosition(model.startMonth)}`;
     byId('end-month-note').textContent = `Loan month ${model.endMonth} · ${monthPosition(model.endMonth)}`;
+    byId('payment-summary-label').textContent = !model.hasLoan
+      ? 'Monthly payment'
+      : hasApplicableExtra
+        ? 'Payment in extra months'
+        : 'Scheduled base payment';
 
     animateMetric(byId('interest-saved'), model.interestSaved, value => money.format(value));
-    animateMetric(byId('payment-with-extras'), model.normalPayment + model.extraAmount, value => money.format(value));
-    animateMetric(byId('time-saved'), model.monthsSaved, value => shortDuration(Math.round(value)));
+    animateMetric(byId('payment-with-extras'), planPayment, value => money.format(value));
+    animateMetric(byId('time-saved'), model.monthsSaved, value => model.hasLoan ? shortDuration(Math.round(value)) : 'No loan');
     animateMetric(byId('monthly-payment'), model.normalPayment, value => money.format(value));
 
-    byId('interest-comparison').textContent = `${money.format(model.plan.totalInterest)} with extras · ${money.format(model.original.totalInterest)} original`;
-    byId('payment-comparison').textContent = `${money.format(model.normalPayment)} base P&I · ${money.format(model.plan.totalExtra)} extra principal contributed`;
-    byId('payoff-comparison').textContent = model.monthsSaved
-      ? `${duration(model.plan.payoffMonth)} with extras · 30 years original`
-      : 'The extra-payment plan does not change the payoff time';
+    byId('interest-comparison').textContent = interestComparison;
+    byId('payment-comparison').textContent = paymentComparison;
+    byId('payoff-comparison').textContent = payoffComparison;
+    byId('interest-comparison-mobile').textContent = interestComparison;
+    byId('payment-comparison-mobile').textContent = paymentComparison;
+    byId('payoff-comparison-mobile').textContent = payoffComparison;
 
     pairs.price.range.setAttribute('aria-valuetext', money.format(model.price));
     pairs.down.range.setAttribute('aria-valuetext', `${percent.format(model.downPercent)} percent, ${money.format(model.downPayment)} down`);
     pairs.rate.range.setAttribute('aria-valuetext', `${(model.annualRate * 100).toFixed(2)} percent annual interest`);
-    pairs.extra.range.setAttribute('aria-valuetext', `${money.format(model.extraAmount)} extra each month`);
+    pairs.extra.range.setAttribute('aria-valuetext', hasApplicableExtra
+      ? `${money.format(model.extraAmount)} requested extra each month, ${money.format(model.plan.totalExtra)} applied in total`
+      : `${money.format(model.extraAmount)} requested extra each month, none applied in the selected window`);
+    inspectYear.disabled = !model.hasLoan;
 
     const savingsPercent = model.original.totalInterest
       ? Math.round(model.interestSaved / model.original.totalInterest * 100)
       : 0;
-    byId('chart-description').textContent = `The extra-payment plan saves ${money.format(model.interestSaved)}, or ${savingsPercent} percent of original interest, and pays the loan off ${duration(model.monthsSaved)} earlier.`;
+    byId('chart-description').textContent = model.hasLoan
+      ? `The extra-payment plan saves ${money.format(model.interestSaved)}, or ${savingsPercent} percent of original interest, and pays the loan off ${duration(model.monthsSaved)} earlier.`
+      : 'No mortgage balance remains after the down payment, so there is no payment schedule to compare.';
     clearTimeout(statusTimer);
     statusTimer = window.setTimeout(() => {
-      calculationStatus.textContent = `Updated estimate: ${money.format(model.interestSaved)} interest saved, ${money.format(model.normalPayment + model.extraAmount)} per month during the extra-payment window, and payoff ${duration(model.monthsSaved)} earlier.`;
-    }, reduceMotion.matches ? 0 : 420);
+      calculationStatus.textContent = model.hasLoan
+        ? `Updated estimate: ${money.format(model.interestSaved)} interest saved, ${money.format(planPayment)} maximum monthly principal and interest under this plan, and payoff ${duration(model.monthsSaved)} earlier.`
+        : 'Updated estimate: no mortgage balance remains after the down payment.';
+    }, 0);
     updateYearDetail();
   }
 
@@ -266,7 +324,20 @@ import { calculateMortgage } from './mortgage-core.js';
 
     const width = Math.max(220, Math.round(chartShell.clientWidth));
     const height = Math.max(400, Math.round(chartShell.clientHeight));
+    if (!model.hasLoan) {
+      chart.setAttribute('viewBox', `0 0 ${width} ${height}`);
+      chart.innerHTML = `
+        <text class="empty-state-title" x="${width / 2}" y="${height / 2 - 8}" text-anchor="middle">No mortgage balance</text>
+        <text class="empty-state-copy" x="${width / 2}" y="${height / 2 + 18}" text-anchor="middle">The down payment covers the full home price.</text>
+      `;
+      chartLayout = null;
+      tooltip.hidden = true;
+      return;
+    }
     const compact = width < 520;
+    const paymentAxisLabel = compact
+      ? 'Extra plan: annual P&I'
+      : 'Extra-payment plan: annual principal and interest';
     const margin = compact
       ? { top: 34, right: 12, bottom: 42, left: 42 }
       : { top: 34, right: 22, bottom: 46, left: 54 };
@@ -296,9 +367,10 @@ import { calculateMortgage } from './mortgage-core.js';
     const selectedPlan = planPoints[selectedIndex];
     const selectedOriginal = originalPoints[selectedIndex];
     const selectedYear = planYears[selectedIndex];
+    const selectedOriginalYear = originalYears[selectedIndex];
     const selectedBandX = xFor(selectedIndex) - step / 2;
     const selectedReading = compact
-      ? `<text class="selected-reading" x="${plotRight}" y="${paymentBottom + 18}" text-anchor="end">Year ${selectedIndex + 1} · ${selectedYear.balance <= 0.5 ? 'Paid off' : `${compactCurrency(selectedYear.balance)} left`}</text>`
+      ? `<text class="selected-reading" x="${plotRight}" y="${paymentBottom + 18}" text-anchor="end">Y${selectedIndex + 1} · ${compactCurrency(selectedYear.balance)} plan · ${compactCurrency(selectedOriginalYear.balance)} original</text>`
       : '';
 
     const paymentGrid = [0, 0.5, 1].map(ratio => {
@@ -345,7 +417,13 @@ import { calculateMortgage } from './mortgage-core.js';
 
     chart.setAttribute('viewBox', `0 0 ${width} ${height}`);
     chart.innerHTML = `
-      <text class="axis-label" x="${plotLeft}" y="16">Annual principal and interest</text>
+      <defs>
+        <pattern id="extra-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <rect width="6" height="6" fill="var(--extra)"></rect>
+          <line x1="0" y1="0" x2="0" y2="6" stroke="var(--surface-strong)" stroke-opacity="0.62" stroke-width="1.5"></line>
+        </pattern>
+      </defs>
+      <text class="axis-label" x="${plotLeft}" y="16">${paymentAxisLabel}</text>
       <text class="axis-label" x="${plotLeft}" y="${balanceTop - 14}">Remaining mortgage balance</text>
       <rect class="selected-band" x="${selectedBandX}" y="${paymentTop}" width="${step}" height="${balanceBottom - paymentTop}"></rect>
       ${paymentGrid}
@@ -385,43 +463,10 @@ import { calculateMortgage } from './mortgage-core.js';
     }
   }
 
-  function interpolateYears(start, end, progress) {
-    return end.map((year, index) => ({
-      year: year.year,
-      interest: start[index].interest + (year.interest - start[index].interest) * progress,
-      regularPrincipal: start[index].regularPrincipal + (year.regularPrincipal - start[index].regularPrincipal) * progress,
-      extraPrincipal: start[index].extraPrincipal + (year.extraPrincipal - start[index].extraPrincipal) * progress,
-      principal: start[index].principal + (year.principal - start[index].principal) * progress,
-      balance: start[index].balance + (year.balance - start[index].balance) * progress
-    }));
-  }
-
   function animateChart(nextPlan, nextOriginal) {
-    cancelAnimationFrame(chartAnimation);
-    const startPlan = displayedPlan.length
-      ? displayedPlan.map(year => ({ ...year }))
-      : nextPlan.map(year => ({ ...year }));
-    const startOriginal = displayedOriginal.length
-      ? displayedOriginal.map(year => ({ ...year }))
-      : nextOriginal.map(year => ({ ...year }));
-
-    if (reduceMotion.matches || !displayedPlan.length) {
-      displayedPlan = nextPlan.map(year => ({ ...year }));
-      displayedOriginal = nextOriginal.map(year => ({ ...year }));
-      renderChart();
-      return;
-    }
-
-    const started = performance.now();
-    const frame = now => {
-      const raw = Math.min(1, (now - started) / 360);
-      const progress = 1 - Math.pow(1 - raw, 3);
-      displayedPlan = interpolateYears(startPlan, nextPlan, progress);
-      displayedOriginal = interpolateYears(startOriginal, nextOriginal, progress);
-      renderChart();
-      if (raw < 1) chartAnimation = requestAnimationFrame(frame);
-    };
-    chartAnimation = requestAnimationFrame(frame);
+    displayedPlan = nextPlan.map(year => ({ ...year }));
+    displayedOriginal = nextOriginal.map(year => ({ ...year }));
+    renderChart();
   }
 
   function updateYearDetail(announce = false) {
@@ -430,38 +475,48 @@ import { calculateMortgage } from './mortgage-core.js';
     const yearNumber = index + 1;
     const planYear = model.plan.years[index];
     const originalYear = model.original.years[index];
+    if (!model.hasLoan) {
+      byId('inspect-year-output').textContent = 'No mortgage';
+      inspectYear.setAttribute('aria-valuetext', 'No mortgage balance to inspect');
+      byId('year-balance').textContent = 'No mortgage';
+      byId('year-original-balance').textContent = 'No mortgage';
+      byId('year-balance-gap').textContent = '$0';
+      byId('year-interest').textContent = '$0';
+      byId('year-principal').textContent = '$0';
+      byId('year-interest-row').hidden = false;
+      byId('year-principal-row').hidden = false;
+      byId('year-detail-note').textContent = 'The down payment covers the full home price, so there is no mortgage schedule to compare.';
+      if (announce) byId('year-detail-status').textContent = 'No mortgage balance to inspect.';
+      return;
+    }
+
     const interestDifference = Math.max(0, originalYear.interest - planYear.interest);
+    const balanceDifference = Math.max(0, originalYear.balance - planYear.balance);
     const payoffYear = Math.ceil(model.plan.payoffMonth / 12);
     const paidOff = planYear.balance <= 0.005;
     const afterPayoff = yearNumber > payoffYear;
     const balanceText = paidOff ? 'Paid off' : money.format(planYear.balance);
 
     byId('inspect-year-output').textContent = `Year ${yearNumber}`;
-    inspectYear.setAttribute('aria-valuetext', paidOff
-      ? `Mortgage year ${yearNumber}, paid off`
-      : `Mortgage year ${yearNumber}, ${money.format(planYear.balance)} remaining`);
+    inspectYear.setAttribute('aria-valuetext', `Mortgage year ${yearNumber}, ${balanceText} with extras, ${money.format(originalYear.balance)} on the original schedule, ${money.format(balanceDifference)} balance reduction`);
     byId('year-balance').textContent = balanceText;
+    byId('year-original-balance').textContent = money.format(originalYear.balance);
+    byId('year-balance-gap').textContent = money.format(balanceDifference);
     byId('year-interest').textContent = money.format(planYear.interest);
     byId('year-principal').textContent = money.format(planYear.principal);
-    byId('year-interest-row').hidden = afterPayoff;
-    byId('year-principal-row').hidden = afterPayoff;
+    byId('year-interest-row').hidden = false;
+    byId('year-principal-row').hidden = false;
 
-    let note;
-    if (afterPayoff) {
-      note = `Loan paid off in Year ${payoffYear}.`;
-    } else {
-      const details = [];
-      if (planYear.extraPrincipal > 0.005) details.push(`Includes ${money.format(planYear.extraPrincipal)} extra principal`);
-      if (interestDifference > 0.005) details.push(`${money.format(interestDifference)} interest saved this year`);
-      if (paidOff) details.push(`Loan paid off during Year ${payoffYear}`);
-      note = details.length ? details.join(' · ') : 'No extra principal scheduled this year.';
-    }
+    const details = [];
+    if (afterPayoff) details.push(`Loan paid off in Year ${payoffYear}`);
+    if (paidOff && !afterPayoff) details.push(`Loan paid off during Year ${payoffYear}`);
+    if (planYear.extraPrincipal > 0.005) details.push(`Includes ${money.format(planYear.extraPrincipal)} extra principal`);
+    if (interestDifference > 0.005) details.push(`${money.format(interestDifference)} interest avoided this year`);
+    const note = details.length ? details.join(' · ') : 'No extra principal or interest reduction this year.';
     byId('year-detail-note').textContent = note;
 
     if (announce) {
-      byId('year-detail-status').textContent = afterPayoff
-        ? `Year ${yearNumber}. Loan paid off in Year ${payoffYear}.`
-        : `Year ${yearNumber}. ${balanceText} remaining. ${money.format(planYear.interest)} interest and ${money.format(planYear.principal)} principal paid this year.`;
+      byId('year-detail-status').textContent = `Year ${yearNumber}. ${balanceText} with extras, ${money.format(originalYear.balance)} on the original schedule, ${money.format(balanceDifference)} balance reduction. ${money.format(interestDifference)} interest avoided this year.`;
     }
   }
 
@@ -482,12 +537,15 @@ import { calculateMortgage } from './mortgage-core.js';
     const planYear = model.plan.years[index];
     const originalYear = model.original.years[index];
     const interestDifference = Math.max(0, originalYear.interest - planYear.interest);
+    const balanceDifference = Math.max(0, originalYear.balance - planYear.balance);
     const position = chartLayout.positions[index];
 
     tooltip.innerHTML = `
       <strong>Year ${year}</strong>
-      <span>${money.format(planYear.interest)} interest · ${money.format(interestDifference)} saved that year</span>
-      <span>${money.format(planYear.extraPrincipal)} extra principal · ${money.format(planYear.balance)} balance</span>
+      <span>${money.format(planYear.balance)} with extras · ${money.format(originalYear.balance)} original</span>
+      <span>${money.format(balanceDifference)} balance reduction</span>
+      <span>${money.format(planYear.interest)} plan interest · ${money.format(interestDifference)} avoided</span>
+      <span>${money.format(planYear.extraPrincipal)} extra principal</span>
     `;
     tooltip.hidden = false;
 
@@ -506,21 +564,49 @@ import { calculateMortgage } from './mortgage-core.js';
     animateChart(model.plan.years, model.original.years);
   }
 
+  function resetCalculator() {
+    downInputMode = 'percent';
+    setPairValue('price', defaults.price);
+    pairs.down.range.value = '20';
+    pairs.down.number.max = String(defaults.price);
+    pairs.down.number.value = String(defaults.downPayment);
+    setPairValue('rate', defaults.rate);
+    setPairValue('extra', defaults.extra);
+    setPickerMonth('start', defaults.startMonth);
+    setPickerMonth('end', defaults.endMonth);
+    inspectYear.value = String(defaults.inspectYear);
+    lastValidNumbers.price = defaults.price;
+    lastValidNumbers.down = defaults.downPayment;
+    lastValidNumbers.rate = defaults.rate;
+    lastValidNumbers.extra = defaults.extra;
+    tooltip.hidden = true;
+    Object.keys(inputErrors).forEach(key => setInputError(key));
+    updateModel();
+    clearTimeout(statusTimer);
+    calculationStatus.textContent = 'Calculator reset to the default example.';
+  }
+
   Object.entries(pairs).filter(([key]) => key !== 'down').forEach(([key, pair]) => {
     const handle = source => {
       const value = Number(source.value);
       if (!Number.isFinite(value)) return;
       const shouldSnap = source === pair.range;
       setPairValue(key, value, shouldSnap);
-      if (key === 'price') syncDownForPrice();
+      lastValidNumbers[key] = Number(pair.number.value);
+      if (key === 'price') {
+        syncDownForPrice();
+        lastValidNumbers.down = Number(pairs.down.number.value);
+        setInputError('down');
+      }
       updateModel();
     };
 
-    pair.range.addEventListener('input', () => handle(pair.range));
+    pair.range.addEventListener('input', () => {
+      setInputError(key);
+      handle(pair.range);
+    });
     pair.number.addEventListener('input', () => {
-      const value = Number(pair.number.value);
-      if (pair.number.value === '' || !Number.isFinite(value)) return;
-      if (value < Number(pair.number.min) || value > Number(pair.number.max)) return;
+      if (!validateNumberInput(key)) return;
       handle(pair.number);
     });
     pair.number.addEventListener('blur', () => {
@@ -529,21 +615,23 @@ import { calculateMortgage } from './mortgage-core.js';
       } else {
         handle(pair.number);
       }
+      setInputError(key);
     });
   });
 
   pairs.down.range.addEventListener('input', () => {
     downInputMode = 'percent';
+    setInputError('down');
     syncDownFromPercent(Number(pairs.down.range.value));
+    lastValidNumbers.down = Number(pairs.down.number.value);
     updateModel();
   });
 
   pairs.down.number.addEventListener('input', () => {
-    const value = Number(pairs.down.number.value);
-    if (pairs.down.number.value === '' || !Number.isFinite(value)) return;
-    if (value < 0 || value > Number(pairs.down.number.max)) return;
+    if (!validateNumberInput('down')) return;
     downInputMode = 'dollars';
-    syncDownFromDollars(value);
+    syncDownFromDollars(Number(pairs.down.number.value));
+    lastValidNumbers.down = Number(pairs.down.number.value);
     updateModel();
   });
 
@@ -554,6 +642,8 @@ import { calculateMortgage } from './mortgage-core.js';
       downInputMode = 'dollars';
       syncDownFromDollars(Number(pairs.down.number.value));
     }
+    lastValidNumbers.down = Number(pairs.down.number.value);
+    setInputError('down');
     updateModel();
   });
 
@@ -584,6 +674,8 @@ import { calculateMortgage } from './mortgage-core.js';
   chartShell.addEventListener('pointerleave', () => {
     tooltip.hidden = true;
   });
+
+  resetButton.addEventListener('click', resetCalculator);
 
   const resizeObserver = new ResizeObserver(() => renderChart());
   resizeObserver.observe(chartShell);

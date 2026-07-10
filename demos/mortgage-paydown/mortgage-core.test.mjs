@@ -24,6 +24,12 @@ test('calculates the default accelerated payoff scenario', () => {
   closeTo(result.interestSaved, 267927.94);
   assert.equal(result.plan.payoffMonth, 186);
   assert.equal(result.monthsSaved, 174);
+  assert.equal(result.hasLoan, true);
+  assert.equal(result.plan.firstExtraMonth, 14);
+  assert.equal(result.plan.lastExtraMonth, 185);
+  assert.equal(result.plan.appliedExtraMonths, 172);
+  closeTo(result.plan.maxExtraPayment, 1000);
+  closeTo(result.plan.maxPaymentWithExtra, 3528.27);
 });
 
 test('matches the original schedule when no extra payment is made', () => {
@@ -84,4 +90,35 @@ test('preserves an exact dollar down payment', () => {
   closeTo(result.downPayment, 123456, 0.001);
   closeTo(result.principal, 414044, 0.001);
   closeTo(result.downPercent, 123456 / 537500 * 100, 0.0001);
+});
+
+test('reports when a selected extra-payment window cannot apply principal', () => {
+  const result = calculateMortgage({
+    ...baseScenario,
+    extraAmount: 30000,
+    startMonth: 360,
+    endMonth: 360
+  });
+
+  closeTo(result.plan.totalExtra, 0);
+  closeTo(result.interestSaved, 0);
+  assert.equal(result.plan.firstExtraMonth, null);
+  assert.equal(result.plan.lastExtraMonth, null);
+  assert.equal(result.plan.appliedExtraMonths, 0);
+  closeTo(result.plan.maxPaymentWithExtra, 0);
+});
+
+test('exposes an explicit no-mortgage state for a 100 percent down payment', () => {
+  const result = calculateMortgage({
+    ...baseScenario,
+    downPayment: baseScenario.price
+  });
+
+  assert.equal(result.hasLoan, false);
+  closeTo(result.principal, 0);
+  closeTo(result.normalPayment, 0);
+  closeTo(result.interestSaved, 0);
+  assert.equal(result.original.payoffMonth, 0);
+  assert.equal(result.plan.payoffMonth, 0);
+  closeTo(result.plan.totalExtra, 0);
 });

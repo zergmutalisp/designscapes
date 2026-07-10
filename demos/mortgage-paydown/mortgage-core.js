@@ -11,6 +11,11 @@ export function amortize({
   let totalInterest = 0;
   let totalExtra = 0;
   let payoffMonth = termMonths;
+  let firstExtraMonth = null;
+  let lastExtraMonth = null;
+  let appliedExtraMonths = 0;
+  let maxExtraPayment = 0;
+  let maxPaymentWithExtra = 0;
   const yearCount = Math.ceil(termMonths / 12);
   const years = Array.from({ length: yearCount }, (_, index) => ({
     year: index + 1,
@@ -38,6 +43,13 @@ export function amortize({
     balance = Math.max(0, balance - principalPaid);
     totalInterest += interest;
     totalExtra += extraPrincipal;
+    if (extraPrincipal > 0.005) {
+      if (firstExtraMonth === null) firstExtraMonth = month;
+      lastExtraMonth = month;
+      appliedExtraMonths += 1;
+      maxExtraPayment = Math.max(maxExtraPayment, extraPrincipal);
+      maxPaymentWithExtra = Math.max(maxPaymentWithExtra, interest + regularPrincipal + extraPrincipal);
+    }
     year.interest += interest;
     year.regularPrincipal += regularPrincipal;
     year.extraPrincipal += extraPrincipal;
@@ -57,7 +69,17 @@ export function amortize({
     if (lastBalance <= 0.005) year.balance = 0;
   });
 
-  return { years, totalInterest, totalExtra, payoffMonth };
+  return {
+    years,
+    totalInterest,
+    totalExtra,
+    payoffMonth,
+    firstExtraMonth,
+    lastExtraMonth,
+    appliedExtraMonths,
+    maxExtraPayment,
+    maxPaymentWithExtra
+  };
 }
 
 export function calculateMortgage({
@@ -75,6 +97,7 @@ export function calculateMortgage({
     : price * downPercent / 100;
   const resolvedDownPercent = price ? downPayment / price * 100 : 0;
   const principal = price - downPayment;
+  const hasLoan = principal > 0.005;
   const monthlyRate = annualRate / 12;
   const growth = Math.pow(1 + monthlyRate, termMonths);
   const normalPayment = monthlyRate === 0
@@ -103,6 +126,7 @@ export function calculateMortgage({
     extraAmount,
     startMonth,
     endMonth,
+    hasLoan,
     downPayment,
     principal,
     normalPayment,
