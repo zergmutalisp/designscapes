@@ -30,9 +30,9 @@ test('shows verified defaults and a keyboard-readable desktop inspector', async 
     timeColor: getComputedStyle(document.querySelector('#time-saved')).color
   }));
   expect(positiveDeltaStyles.interestSaved.color).toBe('rgb(62, 107, 0)');
-  expect(positiveDeltaStyles.interestSaved.background).toContain('rgb(183, 243, 74)');
+  expect(positiveDeltaStyles.interestSaved.background).toBe('none');
   expect(positiveDeltaStyles.balanceReduction.color).toBe('rgb(62, 107, 0)');
-  expect(positiveDeltaStyles.balanceReduction.background).toContain('rgb(183, 243, 74)');
+  expect(positiveDeltaStyles.balanceReduction.background).toBe('none');
   expect(positiveDeltaStyles.paymentColor).toBe('rgb(49, 92, 155)');
   expect(positiveDeltaStyles.timeColor).toBe('rgb(49, 92, 155)');
   await expect(page.getByRole('combobox', { name: 'Start year' })).toHaveValue('1');
@@ -93,12 +93,19 @@ test('offers four semantically stable color themes with Cobalt Ledger as the def
   const selector = page.getByRole('combobox', { name: 'Color theme' });
   await expect(selector).toHaveValue('cobalt-ledger');
   await expect(selector.locator('option')).toHaveCount(4);
+  await expect(selector.locator('option').first()).toHaveText('Cobalt Ledger');
+  expect(await selector.locator('option').allTextContents()).toEqual([
+    'Cobalt Ledger',
+    'Nordic Civic',
+    'Solarized Editorial',
+    'Muted Plum'
+  ]);
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'cobalt-ledger');
 
   const themes = [
+    ['cobalt-ledger', '#f4f1ea', '#315c9b', '#3e4857', '#397f99', '#b75c3e', '#777f8b'],
     ['nordic-civic', '#f2f4f7', '#466a97', '#434c5e', '#3f879b', '#b86443', '#6e7787'],
     ['solarized-editorial', '#fdf6e3', '#1f6fa8', '#36555c', '#16867f', '#a86100', '#718087'],
-    ['cobalt-ledger', '#f4f1ea', '#315c9b', '#3e4857', '#397f99', '#b75c3e', '#777f8b'],
     ['muted-plum', '#f7f3ed', '#67517f', '#414957', '#3f8295', '#b7792f', '#827c87']
   ];
 

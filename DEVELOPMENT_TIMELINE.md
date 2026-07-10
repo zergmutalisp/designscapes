@@ -301,3 +301,12 @@
   - Added the positive-delta treatment only to Interest saved and Balance reduction, with labels retained as redundant semantic cues.
   - Made the treatment conditional so zero savings and zero balance reduction automatically return to the normal theme color.
   - Verified contrast, rendered the treatment across all four palettes and mobile, and added regressions proving other headline figures remain Cobalt.
+
+## 2026-07-10
+### 13:49:10
+- Request: Put Cobalt Ledger first in the palette selector, remove the lime underline, and assess whether metric icons would improve the summary.
+- Assessment: Keep the accessible green as the entire positive-delta treatment because the marker resembled a link or editorial flourish, and defer icons because they risk turning a typographically clear financial summary into a generic fintech card strip.
+- Work completed:
+  - Reordered the selector with Cobalt Ledger first while preserving it as the default.
+  - Removed the neon marker from Interest saved and Balance reduction while keeping their conditional dark-lime text treatment.
+  - Rendered the revised hierarchy at desktop and phone sizes and added regressions for option order and the absence of residual underline styling.
