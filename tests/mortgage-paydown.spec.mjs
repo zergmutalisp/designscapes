@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const calculatorPath = '/demos/mortgage-paydown/';
+const calculatorPath = 'demos/mortgage-paydown/';
 
 async function openCalculator(page, viewport = { width: 1366, height: 768 }) {
   await page.setViewportSize(viewport);
