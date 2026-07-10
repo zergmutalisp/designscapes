@@ -142,3 +142,11 @@
 - Work completed:
   - Added a sticky three-metric summary with payment burden, replaced 360-step month sliders with year/month pickers, enlarged touch targets, and shortened the mobile introduction.
   - Split annual payments and remaining balance into aligned chart panels, removed mobile chart tapping, fixed live-region behavior and contrast, clarified P&I/PMI exclusions, and removed third-party font requests from the calculator.
+
+## 2026-07-09
+### 18:11:52
+- Request: Complete live desktop and phone verification of the mortgage calculator recommendations.
+- Assessment: Exercise the deployed controls at desktop and 390px phone widths, then correct issues discovered during browser testing.
+- Work completed:
+  - Verified zero horizontal overflow, 44px range/select targets, sticky mobile results, disabled mobile chart hit zones, separated charts, accessible picker labels, and successful scenario recalculation.
+  - Made typed numeric values synchronize immediately and shortened the sticky summary labels so all three outcomes remain readable on a phone.

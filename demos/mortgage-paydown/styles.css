@@ -851,7 +851,7 @@ footer p {
 
   .result-summary strong {
     margin: 0.2rem 0 0;
-    font-size: clamp(1.25rem, 6.1vw, 1.65rem);
+    font-size: 1.25rem;
     letter-spacing: -0.04em;
   }
 

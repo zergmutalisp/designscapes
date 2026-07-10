@@ -445,9 +445,18 @@ import { calculateMortgage } from './mortgage-core.js';
     };
 
     pair.range.addEventListener('input', () => handle(pair.range));
-    pair.number.addEventListener('change', () => handle(pair.number));
+    pair.number.addEventListener('input', () => {
+      const value = Number(pair.number.value);
+      if (pair.number.value === '' || !Number.isFinite(value)) return;
+      if (value < Number(pair.number.min) || value > Number(pair.number.max)) return;
+      handle(pair.number);
+    });
     pair.number.addEventListener('blur', () => {
-      if (pair.number.value === '') setPairValue(key, Number(pair.range.value));
+      if (pair.number.value === '') {
+        setPairValue(key, Number(pair.range.value));
+      } else {
+        handle(pair.number);
+      }
     });
   });
 
