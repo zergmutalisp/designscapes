@@ -150,3 +150,11 @@
 - Work completed:
   - Verified zero horizontal overflow, 44px range/select targets, sticky mobile results, disabled mobile chart hit zones, separated charts, accessible picker labels, and successful scenario recalculation.
   - Made typed numeric values synchronize immediately and shortened the sticky summary labels so all three outcomes remain readable on a phone.
+
+## 2026-07-09
+### 18:17:00
+- Request: Ensure the browser-tested mortgage calculator update loads consistently after deployment.
+- Assessment: GitHub Pages served the new HTML alongside a cached JavaScript asset, so version the calculator assets to keep each deployed interface and behavior revision aligned.
+- Work completed:
+  - Added matching cache-busting version parameters to the mortgage calculator stylesheet and module script.
+  - Preserved the clean no-build GitHub Pages deployment while forcing browsers to load the current interaction code.
