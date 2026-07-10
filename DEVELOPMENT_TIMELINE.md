@@ -176,3 +176,12 @@
   - Moved all six loan controls into a compact horizontal desktop strip beneath the three outcomes and placed the year inspector beside the chart heading.
   - Expanded the visualization to the full calculator width, made its height respond to the remaining viewport, and removed the oversized desktop introduction from the working screen.
   - Verified complete fit at 1180×700, 1280×720, 1366×768, and 1440×900, plus zero-overflow mobile regression at 390×844.
+
+## 2026-07-09
+### 19:18:34
+- Request: Allow exact dollar entry for the down payment and home price, and change home-price stepping from $10,000 to $2,500.
+- Assessment: Preserve exact typed cash values in the mortgage model while keeping the sliders synchronized as approximate percentage and stepped-price controls.
+- Work completed:
+  - Converted the down-payment value field to dollars, retained its percentage slider, and synchronized both directions without rounding exact dollar entries.
+  - Made the home-price field visibly editable, preserved arbitrary typed values, and set both its native stepper and slider to $2,500 increments.
+  - Added exact-dollar amortization coverage and browser-tested cash entry, percentage syncing, responsive fit, and financed-balance calculations.

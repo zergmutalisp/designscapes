@@ -6,8 +6,8 @@
   <meta name="description" content="See how extra mortgage payments change lifetime interest and payoff timing.">
   <meta name="theme-color" content="#f2efe7">
   <title>Mortgage Paydown — Extra Payment Calculator</title>
-  <link rel="stylesheet" href="styles.css?v=20260709e">
-  <script type="module" src="app.js?v=20260709e"></script>
+  <link rel="stylesheet" href="styles.css?v=20260709f">
+  <script type="module" src="app.js?v=20260709f"></script>
 </head>
 <body>
   <a class="skip-link" href="#calculator">Skip to calculator</a>
@@ -60,24 +60,24 @@
 
           <div class="field">
             <div class="field-heading">
-              <label for="home-price-range">Home price</label>
+              <label for="home-price-number">Home price</label>
               <div class="number-control currency-control">
                 <span aria-hidden="true">$</span>
-                <input id="home-price-number" type="number" min="100000" max="2000000" step="10000" value="500000" inputmode="numeric" aria-label="Home price in dollars">
+                <input id="home-price-number" type="number" min="100000" max="2000000" step="2500" value="500000" inputmode="numeric" aria-label="Home price in dollars">
               </div>
             </div>
-            <input id="home-price-range" type="range" min="100000" max="2000000" step="10000" value="500000">
+            <input id="home-price-range" type="range" min="100000" max="2000000" step="2500" value="500000" aria-label="Home price">
           </div>
 
           <div class="field">
             <div class="field-heading">
-              <label for="down-payment-range">Down payment</label>
-              <div class="number-control suffix-control">
-                <input id="down-payment-number" type="number" min="0" max="40" step="1" value="20" inputmode="numeric" aria-label="Down payment percentage">
-                <span aria-hidden="true">%</span>
+              <label for="down-payment-number">Down payment</label>
+              <div class="number-control currency-control">
+                <span aria-hidden="true">$</span>
+                <input id="down-payment-number" type="number" min="0" max="500000" step="1" value="100000" inputmode="numeric" aria-label="Down payment in dollars">
               </div>
             </div>
-            <input id="down-payment-range" type="range" min="0" max="40" step="1" value="20">
+            <input id="down-payment-range" type="range" min="0" max="100" step="1" value="20" aria-label="Down payment percentage">
             <p class="field-note" id="down-payment-note"></p>
           </div>
 

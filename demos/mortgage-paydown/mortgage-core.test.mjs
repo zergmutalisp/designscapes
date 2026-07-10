@@ -73,3 +73,15 @@ test('supports the public $30,000 monthly extra-payment ceiling', () => {
   assert.ok(result.interestSaved > 0);
   assert.equal(result.plan.years[29].balance, 0);
 });
+
+test('preserves an exact dollar down payment', () => {
+  const result = calculateMortgage({
+    ...baseScenario,
+    price: 537500,
+    downPayment: 123456
+  });
+
+  closeTo(result.downPayment, 123456, 0.001);
+  closeTo(result.principal, 414044, 0.001);
+  closeTo(result.downPercent, 123456 / 537500 * 100, 0.0001);
+});

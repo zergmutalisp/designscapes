@@ -1155,6 +1155,10 @@ footer p {
     font-size: 0.78rem;
   }
 
+  .controls .currency-control input {
+    width: 78px;
+  }
+
   .controls .field-note,
   .controls .control-footnote {
     font-size: 0.65rem;

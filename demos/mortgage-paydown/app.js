@@ -41,6 +41,9 @@ import { calculateMortgage } from './mortgage-core.js';
     currency: 'USD',
     maximumFractionDigits: 0
   });
+  const percent = new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 2
+  });
 
   const metricAnimations = new Map();
   let model = null;
@@ -49,6 +52,7 @@ import { calculateMortgage } from './mortgage-core.js';
   let chartAnimation = 0;
   let chartLayout = null;
   let statusTimer = 0;
+  let downInputMode = 'percent';
 
   function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
@@ -68,11 +72,41 @@ import { calculateMortgage } from './mortgage-core.js';
     return Number(snapped.toFixed(precision));
   }
 
-  function setPairValue(key, value) {
+  function setPairValue(key, value, snap = true) {
     const pair = pairs[key];
-    const normalized = normalizeInput(pair.range, value);
+    const normalized = snap
+      ? normalizeInput(pair.range, value)
+      : clamp(value, Number(pair.number.min), Number(pair.number.max));
     pair.range.value = String(normalized);
     pair.number.value = String(normalized);
+  }
+
+  function syncDownFromPercent(value) {
+    const normalizedPercent = normalizeInput(pairs.down.range, value);
+    const price = Number(pairs.price.number.value);
+    const dollars = Math.round(price * normalizedPercent / 100);
+    pairs.down.range.value = String(normalizedPercent);
+    pairs.down.number.max = String(price);
+    pairs.down.number.value = String(dollars);
+  }
+
+  function syncDownFromDollars(value) {
+    const price = Number(pairs.price.number.value);
+    const dollars = Math.round(clamp(value, 0, price));
+    const downPercent = price ? dollars / price * 100 : 0;
+    pairs.down.number.max = String(price);
+    pairs.down.number.value = String(dollars);
+    pairs.down.range.value = String(clamp(downPercent, 0, 100));
+  }
+
+  function syncDownForPrice() {
+    const price = Number(pairs.price.number.value);
+    pairs.down.number.max = String(price);
+    if (downInputMode === 'dollars') {
+      syncDownFromDollars(Number(pairs.down.number.value));
+    } else {
+      syncDownFromPercent(Number(pairs.down.range.value));
+    }
   }
 
   function monthPosition(month) {
@@ -140,8 +174,9 @@ import { calculateMortgage } from './mortgage-core.js';
 
   function readState() {
     return {
-      price: Number(pairs.price.range.value),
+      price: Number(pairs.price.number.value),
       downPercent: Number(pairs.down.range.value),
+      downPayment: Number(pairs.down.number.value),
       annualRate: Number(pairs.rate.range.value) / 100,
       extraAmount: Number(pairs.extra.range.value),
       startMonth: pickerMonth('start'),
@@ -183,7 +218,7 @@ import { calculateMortgage } from './mortgage-core.js';
   }
 
   function updateText() {
-    byId('down-payment-note').textContent = `${money.format(model.downPayment)} down · ${money.format(model.principal)} financed`;
+    byId('down-payment-note').textContent = `${percent.format(model.downPercent)}% down · ${money.format(model.principal)} financed`;
     byId('start-month-note').textContent = `Loan month ${model.startMonth} · ${monthPosition(model.startMonth)}`;
     byId('end-month-note').textContent = `Loan month ${model.endMonth} · ${monthPosition(model.endMonth)}`;
 
@@ -199,7 +234,7 @@ import { calculateMortgage } from './mortgage-core.js';
       : 'The extra-payment plan does not change the payoff time';
 
     pairs.price.range.setAttribute('aria-valuetext', money.format(model.price));
-    pairs.down.range.setAttribute('aria-valuetext', `${model.downPercent} percent, ${money.format(model.downPayment)} down`);
+    pairs.down.range.setAttribute('aria-valuetext', `${percent.format(model.downPercent)} percent, ${money.format(model.downPayment)} down`);
     pairs.rate.range.setAttribute('aria-valuetext', `${(model.annualRate * 100).toFixed(2)} percent annual interest`);
     pairs.extra.range.setAttribute('aria-valuetext', `${money.format(model.extraAmount)} extra each month`);
 
@@ -471,11 +506,13 @@ import { calculateMortgage } from './mortgage-core.js';
     animateChart(model.plan.years, model.original.years);
   }
 
-  Object.entries(pairs).forEach(([key, pair]) => {
+  Object.entries(pairs).filter(([key]) => key !== 'down').forEach(([key, pair]) => {
     const handle = source => {
       const value = Number(source.value);
       if (!Number.isFinite(value)) return;
-      setPairValue(key, value);
+      const shouldSnap = source === pair.range || key !== 'price';
+      setPairValue(key, value, shouldSnap);
+      if (key === 'price') syncDownForPrice();
       updateModel();
     };
 
@@ -493,6 +530,31 @@ import { calculateMortgage } from './mortgage-core.js';
         handle(pair.number);
       }
     });
+  });
+
+  pairs.down.range.addEventListener('input', () => {
+    downInputMode = 'percent';
+    syncDownFromPercent(Number(pairs.down.range.value));
+    updateModel();
+  });
+
+  pairs.down.number.addEventListener('input', () => {
+    const value = Number(pairs.down.number.value);
+    if (pairs.down.number.value === '' || !Number.isFinite(value)) return;
+    if (value < 0 || value > Number(pairs.down.number.max)) return;
+    downInputMode = 'dollars';
+    syncDownFromDollars(value);
+    updateModel();
+  });
+
+  pairs.down.number.addEventListener('blur', () => {
+    if (pairs.down.number.value === '') {
+      syncDownFromDollars(model ? model.downPayment : 0);
+    } else {
+      downInputMode = 'dollars';
+      syncDownFromDollars(Number(pairs.down.number.value));
+    }
+    updateModel();
   });
 
   [pickers.startYear, pickers.startMonth].forEach(picker => {
@@ -527,6 +589,7 @@ import { calculateMortgage } from './mortgage-core.js';
   resizeObserver.observe(chartShell);
 
   populatePickers();
+  syncDownForPrice();
   model = calculate();
   displayedPlan = model.plan.years.map(year => ({ ...year }));
   displayedOriginal = model.original.years.map(year => ({ ...year }));

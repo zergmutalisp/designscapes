@@ -63,13 +63,17 @@ export function amortize({
 export function calculateMortgage({
   price,
   downPercent,
+  downPayment: requestedDownPayment,
   annualRate,
   extraAmount,
   startMonth,
   endMonth,
   termMonths = 360
 }) {
-  const downPayment = price * downPercent / 100;
+  const downPayment = Number.isFinite(requestedDownPayment)
+    ? Math.min(price, Math.max(0, requestedDownPayment))
+    : price * downPercent / 100;
+  const resolvedDownPercent = price ? downPayment / price * 100 : 0;
   const principal = price - downPayment;
   const monthlyRate = annualRate / 12;
   const growth = Math.pow(1 + monthlyRate, termMonths);
@@ -94,7 +98,7 @@ export function calculateMortgage({
 
   return {
     price,
-    downPercent,
+    downPercent: resolvedDownPercent,
     annualRate,
     extraAmount,
     startMonth,
