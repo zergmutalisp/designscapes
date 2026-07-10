@@ -212,3 +212,12 @@
   - Removed the full demos-introduction and closing-copy sections without changing either demo entry.
   - Tightened the projects section spacing and replaced “Two demos · More to come” with the animated “View the source on GitHub” link.
   - Preserved the underline interaction and added a clean stacked mobile footer layout with zero horizontal overflow.
+
+## 2026-07-10
+### 00:22:20
+- Request: Fix select-all replacement in the monthly extra-payment field and make extra payments start at Year 2, Month 2 by default.
+- Assessment: Preserve direct numeric entry without slider-step rounding while retaining stepped slider behavior, then update every default calculation and display to loan month 14.
+- Work completed:
+  - Fixed direct replacement and exact-dollar entry for the extra-payment field, including matching behavior for the interest-rate number field.
+  - Changed the default extra-payment start to Year 2, Month 2 and refreshed the savings, payoff, yearly detail, gallery preview, and regression expectations.
+  - Passed six mortgage calculation tests and verified select-all replacement, default picker state, updated results, and zero horizontal overflow at desktop and phone sizes.

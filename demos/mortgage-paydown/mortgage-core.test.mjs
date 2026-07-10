@@ -7,7 +7,7 @@ const baseScenario = {
   downPercent: 20,
   annualRate: 0.065,
   extraAmount: 1000,
-  startMonth: 13,
+  startMonth: 14,
   endMonth: 360
 };
 
@@ -20,10 +20,10 @@ test('calculates the default accelerated payoff scenario', () => {
 
   closeTo(result.normalPayment, 2528.27);
   closeTo(result.original.totalInterest, 510177.95);
-  closeTo(result.plan.totalInterest, 240704.07);
-  closeTo(result.interestSaved, 269473.88);
-  assert.equal(result.plan.payoffMonth, 185);
-  assert.equal(result.monthsSaved, 175);
+  closeTo(result.plan.totalInterest, 242250.01);
+  closeTo(result.interestSaved, 267927.94);
+  assert.equal(result.plan.payoffMonth, 186);
+  assert.equal(result.monthsSaved, 174);
 });
 
 test('matches the original schedule when no extra payment is made', () => {

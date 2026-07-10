@@ -141,7 +141,7 @@ import { calculateMortgage } from './mortgage-core.js';
     pickers.endYear.innerHTML = yearOptions;
     pickers.startMonth.innerHTML = monthOptions;
     pickers.endMonth.innerHTML = monthOptions;
-    setPickerMonth('start', 13);
+    setPickerMonth('start', 14);
     setPickerMonth('end', 360);
   }
 
@@ -177,8 +177,8 @@ import { calculateMortgage } from './mortgage-core.js';
       price: Number(pairs.price.number.value),
       downPercent: Number(pairs.down.range.value),
       downPayment: Number(pairs.down.number.value),
-      annualRate: Number(pairs.rate.range.value) / 100,
-      extraAmount: Number(pairs.extra.range.value),
+      annualRate: Number(pairs.rate.number.value) / 100,
+      extraAmount: Number(pairs.extra.number.value),
       startMonth: pickerMonth('start'),
       endMonth: pickerMonth('end')
     };
@@ -510,7 +510,7 @@ import { calculateMortgage } from './mortgage-core.js';
     const handle = source => {
       const value = Number(source.value);
       if (!Number.isFinite(value)) return;
-      const shouldSnap = source === pair.range || key !== 'price';
+      const shouldSnap = source === pair.range;
       setPairValue(key, value, shouldSnap);
       if (key === 'price') syncDownForPrice();
       updateModel();

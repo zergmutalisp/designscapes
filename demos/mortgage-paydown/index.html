@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#f2efe7">
   <title>Mortgage Paydown — Extra Payment Calculator</title>
   <link rel="stylesheet" href="styles.css?v=20260709f">
-  <script type="module" src="app.js?v=20260709f"></script>
+  <script type="module" src="app.js?v=20260710a"></script>
 </head>
 <body>
   <a class="skip-link" href="#calculator">Skip to calculator</a>
@@ -39,18 +39,18 @@
       <div class="result-summary">
         <article>
           <p>Interest saved</p>
-          <strong id="interest-saved">$269,474</strong>
-          <span id="interest-comparison">$240,704 with extras · $510,178 original</span>
+          <strong id="interest-saved">$267,928</strong>
+          <span id="interest-comparison">$242,250 with extras · $510,178 original</span>
         </article>
         <article>
           <p>Monthly with extras</p>
           <strong id="payment-with-extras">$3,528</strong>
-          <span id="payment-comparison">$2,528 base P&amp;I · $172,974 extra principal contributed</span>
+          <span id="payment-comparison">$2,528 base P&amp;I · $172,000 extra principal contributed</span>
         </article>
         <article>
           <p>Time saved</p>
-          <strong id="time-saved">14 yr 7 mo</strong>
-          <span id="payoff-comparison">15 years 5 months with extras · 30 years original</span>
+          <strong id="time-saved">14 yr 6 mo</strong>
+          <span id="payoff-comparison">15 years 6 months with extras · 30 years original</span>
         </article>
       </div>
 
@@ -116,10 +116,10 @@
               </select>
               <label class="sr-only" for="start-month-in-year">Start month within year</label>
               <select id="start-month-in-year" aria-describedby="start-month-note">
-                <option value="1" selected>Month 1</option>
+                <option value="2" selected>Month 2</option>
               </select>
             </div>
-            <p class="field-note" id="start-month-note">Loan month 13</p>
+            <p class="field-note" id="start-month-note">Loan month 14</p>
           </div>
 
           <div class="field">
@@ -175,18 +175,18 @@
             <dl>
               <div class="year-detail-primary">
                 <dt>Remaining balance</dt>
-                <dd id="year-balance">$378,395</dd>
+                <dd id="year-balance">$379,456</dd>
               </div>
               <div id="year-interest-row">
                 <dt>Interest this year</dt>
-                <dd id="year-interest">$25,205</dd>
+                <dd id="year-interest">$25,266</dd>
               </div>
               <div id="year-principal-row">
                 <dt>Principal this year</dt>
-                <dd id="year-principal">$17,134</dd>
+                <dd id="year-principal">$16,073</dd>
               </div>
             </dl>
-            <p id="year-detail-note">Includes $12,000 extra principal · $364 interest saved this year</p>
+            <p id="year-detail-note">Includes $11,000 extra principal · $303 interest saved this year</p>
           </div>
           <p class="sr-only" id="year-detail-status" aria-live="polite" aria-atomic="true"></p>
         </div>
