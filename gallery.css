@@ -306,15 +306,33 @@ h3 {
 
 .mortgage-visual {
   padding: clamp(22px, 4vw, 54px);
-  background: #e8e5dc;
+  background: #e3e0d8;
 }
 
 .mortgage-preview {
+  --preview-paper: #f4f1ea;
+  --preview-surface: #ffffff;
+  --preview-control: #e8e5de;
+  --preview-ink: #252932;
+  --preview-muted: #5b6471;
+  --preview-line: #d2d0ca;
+  --preview-accent: #315c9b;
+  --preview-accent-soft: #dde6f3;
+  --preview-principal: #3e4857;
+  --preview-extra: #397f99;
+  --preview-interest: #b75c3e;
+  --preview-original: #777f8b;
+  --preview-gain: #3e6b00;
   width: 100%;
   height: 100%;
-  padding: clamp(18px, 3vw, 38px);
+  padding: clamp(15px, 2vw, 28px);
   overflow: hidden;
-  background: #fbfaf6;
+  border: 1px solid var(--preview-line);
+  border-radius: 16px;
+  background: var(--preview-paper);
+  box-shadow: 0 22px 50px rgba(37, 41, 50, 0.09);
+  color: var(--preview-ink);
+  font-family: "Jost", system-ui, sans-serif;
   transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -325,30 +343,39 @@ h3 {
 
 .preview-topline {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding-bottom: 0.9rem;
-  border-bottom: 1px solid #ddd9cf;
-  color: #566158;
-  font-size: clamp(0.52rem, 0.8vw, 0.72rem);
+  padding-bottom: clamp(7px, 0.9vw, 11px);
+  border-bottom: 1px solid var(--preview-line);
+  color: var(--preview-muted);
+  font-size: clamp(0.45rem, 0.64vw, 0.62rem);
   text-transform: uppercase;
   letter-spacing: 0.09em;
 }
 
 .preview-topline span:first-child {
-  color: #172019;
+  color: var(--preview-ink);
   font-weight: 500;
+}
+
+.preview-topline span:last-child {
+  padding: 0.22rem 0.48rem;
+  border: 1px solid var(--preview-line);
+  border-radius: 999px;
+  background: var(--preview-surface);
+  color: var(--preview-accent);
 }
 
 .preview-results {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  padding: clamp(18px, 2.5vw, 32px) 0 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: clamp(10px, 1.35vw, 18px) 0;
 }
 
 .preview-results > div + div {
-  padding-left: clamp(18px, 3vw, 38px);
-  border-left: 1px solid #ddd9cf;
+  padding-left: clamp(10px, 1.5vw, 20px);
+  border-left: 1px solid var(--preview-line);
 }
 
 .preview-results span,
@@ -357,60 +384,173 @@ h3 {
 }
 
 .preview-results span {
-  color: #687168;
-  font-size: clamp(0.52rem, 0.8vw, 0.7rem);
+  color: var(--preview-muted);
+  font-size: clamp(0.4rem, 0.58vw, 0.58rem);
+  line-height: 1.25;
 }
 
 .preview-results strong {
-  color: var(--green);
-  font-family: "Cormorant Garamond", Georgia, serif;
-  font-size: clamp(1.7rem, 4.3vw, 4.8rem);
-  font-weight: 600;
-  letter-spacing: -0.045em;
+  margin-top: 0.13rem;
+  color: var(--preview-accent);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.05rem, 2.25vw, 2.45rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  white-space: nowrap;
+}
+
+.preview-results > div:first-child strong {
+  color: var(--preview-gain);
+}
+
+.preview-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(10px, 2vw, 26px);
+  padding: clamp(7px, 0.9vw, 11px) clamp(8px, 1.1vw, 14px);
+  border-block: 1px solid var(--preview-line);
+  background: var(--preview-control);
+}
+
+.preview-controls div {
+  min-width: 0;
+}
+
+.preview-controls span,
+.preview-controls strong {
+  display: block;
+}
+
+.preview-controls span {
+  color: var(--preview-muted);
+  font-size: clamp(0.36rem, 0.5vw, 0.5rem);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.preview-controls strong {
+  margin-top: 0.08rem;
+  overflow: hidden;
+  color: var(--preview-ink);
+  font-size: clamp(0.45rem, 0.64vw, 0.62rem);
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview-chart-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(8px, 1vw, 13px) 0 0;
+}
+
+.preview-chart-head span,
+.preview-chart-head strong {
+  display: block;
+}
+
+.preview-chart-head > div > span {
+  color: var(--preview-accent);
+  font-size: clamp(0.35rem, 0.48vw, 0.48rem);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.preview-chart-head strong {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(0.75rem, 1.15vw, 1.2rem);
+  font-weight: 500;
   line-height: 1;
 }
 
+.preview-chart-head > span {
+  color: var(--preview-muted);
+  font-size: clamp(0.34rem, 0.5vw, 0.5rem);
+  white-space: nowrap;
+}
+
 .preview-chart {
+  display: block;
   width: 100%;
-  height: auto;
-  margin-top: 0.35rem;
+  height: clamp(125px, 12vw, 160px);
+  margin-top: 0.25rem;
 }
 
 .preview-grid line {
-  stroke: #dedbd3;
+  stroke: var(--preview-line);
   stroke-width: 1;
 }
 
-.preview-bars rect {
-  fill: #34473a;
-  opacity: 0.92;
+.preview-axis-label {
+  fill: var(--preview-muted);
+  font-family: "Jost", system-ui, sans-serif;
+  font-size: 6.5px;
+  font-weight: 500;
+  letter-spacing: 0.45px;
 }
 
-.preview-bars rect:nth-child(n+8):nth-child(-n+17) {
-  fill: var(--green);
+.preview-selected-band {
+  fill: var(--preview-accent-soft);
+  opacity: 0.7;
+}
+
+.preview-bars .principal {
+  fill: var(--preview-principal);
+}
+
+.preview-bars .extra {
+  fill: url(#preview-extra-hatch);
+}
+
+.preview-bars .interest {
+  fill: var(--preview-interest);
+}
+
+.preview-plan-area {
+  fill: var(--preview-accent);
+  opacity: 0.07;
 }
 
 .preview-plan-line,
 .preview-original-line {
   fill: none;
-  stroke-width: 3;
+  stroke-width: 2.2;
   stroke-linecap: round;
 }
 
 .preview-plan-line {
-  stroke: var(--green);
+  stroke: var(--preview-accent);
 }
 
 .preview-original-line {
-  stroke: #949a95;
-  stroke-dasharray: 7 7;
+  stroke: var(--preview-original);
+  stroke-dasharray: 5 5;
+}
+
+.preview-point {
+  stroke: var(--preview-surface);
+  stroke-width: 1.5;
+}
+
+.preview-point.plan {
+  fill: var(--preview-accent);
+}
+
+.preview-point.original {
+  fill: var(--preview-original);
 }
 
 .preview-legend {
   display: flex;
-  gap: 1rem;
-  color: #687168;
-  font-size: 0.58rem;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  margin-top: 0.15rem;
+  color: var(--preview-muted);
+  font-size: clamp(0.34rem, 0.48vw, 0.48rem);
 }
 
 .preview-legend span {
@@ -419,19 +559,33 @@ h3 {
   gap: 0.35rem;
 }
 
-.legend-dot {
+.preview-legend-block {
   width: 7px;
   height: 7px;
-  border-radius: 50%;
+  border-radius: 2px;
 }
 
-.legend-dot.plan {
-  background: var(--green);
+.preview-legend-block.principal {
+  background: var(--preview-principal);
 }
 
-.legend-line {
+.preview-legend-block.extra {
+  background-color: var(--preview-extra);
+  background-image: repeating-linear-gradient(45deg, transparent 0 2px, rgba(255, 255, 255, 0.72) 2px 3px);
+}
+
+.preview-legend-block.interest {
+  background: var(--preview-interest);
+}
+
+.preview-legend-line {
   width: 12px;
-  border-top: 2px dashed #949a95;
+  border-top: 2px solid var(--preview-accent);
+}
+
+.preview-legend-line.original {
+  border-color: var(--preview-original);
+  border-top-style: dashed;
 }
 
 .pier-visual video {
@@ -611,7 +765,7 @@ footer p:last-child {
   }
 
   .mortgage-preview {
-    padding: 16px;
+    padding: 14px;
   }
 
   .preview-topline span:last-child {
@@ -619,26 +773,39 @@ footer p:last-child {
   }
 
   .preview-results {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .preview-results > div + div {
-    margin-top: 1rem;
-    padding: 1rem 0 0;
-    border-top: 1px solid #ddd9cf;
-    border-left: 0;
+    margin: 0;
+    padding: 0 0 0 8px;
+    border-top: 0;
+    border-left: 1px solid var(--preview-line);
+  }
+
+  .preview-results strong {
+    font-size: 1.05rem;
+  }
+
+  .preview-controls {
+    gap: 8px;
+    padding: 7px 8px;
+  }
+
+  .preview-chart-head > span {
+    display: none;
   }
 
   .preview-chart {
-    margin-top: 1rem;
-    transform: scaleY(1.35);
-    transform-origin: center;
+    height: 150px;
+    margin-top: 0.2rem;
+    transform: none;
   }
 
   .preview-legend {
-    margin-top: 2rem;
-    flex-direction: column;
-    gap: 0.35rem;
+    margin-top: 0.15rem;
+    flex-direction: row;
+    gap: 0.25rem 0.6rem;
   }
 
   .pier-preview-copy {

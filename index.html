@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&amp;family=Jost:wght@300;400;500&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="gallery.css?v=20260709d">
+  <link rel="stylesheet" href="gallery.css?v=20260710a">
   <script src="gallery.js" defer></script>
 </head>
 <body>
@@ -52,7 +52,7 @@
           <div class="mortgage-preview" aria-hidden="true">
             <div class="preview-topline">
               <span>Mortgage Paydown</span>
-              <span>Extra payment calculator</span>
+              <span>Cobalt Ledger</span>
             </div>
             <div class="preview-results">
               <div>
@@ -60,39 +60,67 @@
                 <strong>$286,709</strong>
               </div>
               <div>
-                <span>Paid off earlier</span>
+                <span>Payment in extra months</span>
+                <strong>$3,528</strong>
+              </div>
+              <div>
+                <span>Time saved</span>
                 <strong>15 yr 3 mo</strong>
               </div>
             </div>
-            <svg class="preview-chart" viewBox="0 0 760 280" role="presentation">
+            <div class="preview-controls">
+              <div><span>Loan details</span><strong>$500k · $100k down · 6.5%</strong></div>
+              <div><span>Extra payment plan</span><strong>$1,000/mo · starts Y1 M2</strong></div>
+            </div>
+            <div class="preview-chart-head">
+              <div><span>Thirty-year view</span><strong>Payments and balance</strong></div>
+              <span>Year 2 · $366k with extras · $391k original</span>
+            </div>
+            <svg class="preview-chart" viewBox="0 0 760 190" preserveAspectRatio="none" role="presentation">
+              <defs>
+                <pattern id="preview-extra-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                  <rect width="6" height="6" fill="#397f99"></rect>
+                  <line x1="0" y1="0" x2="0" y2="6" stroke="#ffffff" stroke-opacity="0.72" stroke-width="1.4"></line>
+                </pattern>
+              </defs>
+              <rect class="preview-selected-band" x="44" y="22" width="20" height="152"></rect>
+              <text class="preview-axis-label" x="18" y="12">EXTRA-PAYMENT PLAN: ANNUAL PRINCIPAL AND INTEREST</text>
+              <text class="preview-axis-label" x="18" y="108">REMAINING MORTGAGE BALANCE</text>
               <g class="preview-grid">
-                <line x1="18" y1="36" x2="742" y2="36"></line>
-                <line x1="18" y1="136" x2="742" y2="136"></line>
-                <line x1="18" y1="236" x2="742" y2="236"></line>
+                <line x1="18" y1="28" x2="742" y2="28"></line>
+                <line x1="18" y1="84" x2="742" y2="84"></line>
+                <line x1="18" y1="118" x2="742" y2="118"></line>
+                <line x1="18" y1="174" x2="742" y2="174"></line>
               </g>
               <g class="preview-bars">
-                <rect x="28" y="140" width="12" height="96"></rect><rect x="52" y="138" width="12" height="98"></rect>
-                <rect x="76" y="136" width="12" height="100"></rect><rect x="100" y="134" width="12" height="102"></rect>
-                <rect x="124" y="131" width="12" height="105"></rect><rect x="148" y="128" width="12" height="108"></rect>
-                <rect x="172" y="124" width="12" height="112"></rect><rect x="196" y="120" width="12" height="116"></rect>
-                <rect x="220" y="116" width="12" height="120"></rect><rect x="244" y="111" width="12" height="125"></rect>
-                <rect x="268" y="105" width="12" height="131"></rect><rect x="292" y="98" width="12" height="138"></rect>
-                <rect x="316" y="90" width="12" height="146"></rect><rect x="340" y="81" width="12" height="155"></rect>
-                <rect x="364" y="72" width="12" height="164"></rect><rect x="388" y="64" width="12" height="172"></rect>
-                <rect x="412" y="58" width="12" height="178"></rect><rect x="436" y="70" width="12" height="166"></rect>
-                <rect x="460" y="84" width="12" height="152"></rect><rect x="484" y="99" width="12" height="137"></rect>
-                <rect x="508" y="114" width="12" height="122"></rect><rect x="532" y="130" width="12" height="106"></rect>
-                <rect x="556" y="146" width="12" height="90"></rect><rect x="580" y="162" width="12" height="74"></rect>
-                <rect x="604" y="178" width="12" height="58"></rect><rect x="628" y="194" width="12" height="42"></rect>
-                <rect x="652" y="208" width="12" height="28"></rect><rect x="676" y="219" width="12" height="17"></rect>
-                <rect x="700" y="228" width="12" height="8"></rect>
+                <g transform="translate(30)"><rect class="principal" y="78" width="10" height="6"></rect><rect class="extra" y="64" width="10" height="14"></rect><rect class="interest" y="33" width="10" height="31"></rect></g>
+                <g transform="translate(52)"><rect class="principal" y="76" width="10" height="8"></rect><rect class="extra" y="62" width="10" height="14"></rect><rect class="interest" y="33" width="10" height="29"></rect></g>
+                <g transform="translate(74)"><rect class="principal" y="75" width="10" height="9"></rect><rect class="extra" y="61" width="10" height="14"></rect><rect class="interest" y="33" width="10" height="28"></rect></g>
+                <g transform="translate(96)"><rect class="principal" y="73" width="10" height="11"></rect><rect class="extra" y="59" width="10" height="14"></rect><rect class="interest" y="32" width="10" height="27"></rect></g>
+                <g transform="translate(118)"><rect class="principal" y="71" width="10" height="13"></rect><rect class="extra" y="57" width="10" height="14"></rect><rect class="interest" y="32" width="10" height="25"></rect></g>
+                <g transform="translate(140)"><rect class="principal" y="69" width="10" height="15"></rect><rect class="extra" y="55" width="10" height="14"></rect><rect class="interest" y="32" width="10" height="23"></rect></g>
+                <g transform="translate(162)"><rect class="principal" y="67" width="10" height="17"></rect><rect class="extra" y="53" width="10" height="14"></rect><rect class="interest" y="32" width="10" height="21"></rect></g>
+                <g transform="translate(184)"><rect class="principal" y="65" width="10" height="19"></rect><rect class="extra" y="51" width="10" height="14"></rect><rect class="interest" y="31" width="10" height="20"></rect></g>
+                <g transform="translate(206)"><rect class="principal" y="62" width="10" height="22"></rect><rect class="extra" y="48" width="10" height="14"></rect><rect class="interest" y="31" width="10" height="17"></rect></g>
+                <g transform="translate(228)"><rect class="principal" y="60" width="10" height="24"></rect><rect class="extra" y="46" width="10" height="14"></rect><rect class="interest" y="31" width="10" height="15"></rect></g>
+                <g transform="translate(250)"><rect class="principal" y="57" width="10" height="27"></rect><rect class="extra" y="43" width="10" height="14"></rect><rect class="interest" y="31" width="10" height="12"></rect></g>
+                <g transform="translate(272)"><rect class="principal" y="55" width="10" height="29"></rect><rect class="extra" y="41" width="10" height="14"></rect><rect class="interest" y="31" width="10" height="10"></rect></g>
+                <g transform="translate(294)"><rect class="principal" y="52" width="10" height="32"></rect><rect class="extra" y="38" width="10" height="14"></rect><rect class="interest" y="31" width="10" height="7"></rect></g>
+                <g transform="translate(316)"><rect class="principal" y="49" width="10" height="35"></rect><rect class="extra" y="35" width="10" height="14"></rect><rect class="interest" y="30" width="10" height="5"></rect></g>
+                <g transform="translate(338)"><rect class="principal" y="67" width="10" height="17"></rect><rect class="extra" y="60" width="10" height="7"></rect><rect class="interest" y="57" width="10" height="3"></rect></g>
               </g>
-              <path class="preview-original-line" d="M34 54 C190 62 330 83 448 119 S652 197 706 232"></path>
-              <path class="preview-plan-line" d="M34 56 C174 78 302 121 400 174 S548 232 706 236"></path>
+              <path class="preview-plan-area" d="M35 121 C150 130 260 148 340 170 L365 174 L735 174 L35 174 Z"></path>
+              <path class="preview-original-line" d="M35 121 C220 125 420 136 570 151 S690 168 735 174"></path>
+              <path class="preview-plan-line" d="M35 121 C150 130 260 148 340 170 L365 174 L735 174"></path>
+              <circle class="preview-point original" cx="57" cy="122" r="3"></circle>
+              <circle class="preview-point plan" cx="57" cy="124" r="3"></circle>
             </svg>
             <div class="preview-legend">
-              <span><i class="legend-dot plan"></i>Balance with extras</span>
-              <span><i class="legend-line original"></i>Original balance</span>
+              <span><i class="preview-legend-block principal"></i>Regular principal</span>
+              <span><i class="preview-legend-block extra"></i>Extra principal</span>
+              <span><i class="preview-legend-block interest"></i>Interest</span>
+              <span><i class="preview-legend-line plan"></i>Balance with extras</span>
+              <span><i class="preview-legend-line original"></i>Original balance</span>
             </div>
           </div>
         </a>

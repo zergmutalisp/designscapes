@@ -328,3 +328,12 @@
   - Added mobile tap selection and thresholded horizontal touch scrubbing with a moving preview band, compact year marker, live inspector values, release-to-commit behavior, and out-of-bounds cancellation.
   - Preserved vertical scrolling with touch-action and directional gesture detection, and kept preview changes separate from committed slider state until release.
   - Added chart-matched line, color, and hatch keys to the persistent inspector and verified representative values, narrow-phone layout, desktop layout, overflow, console output, and all gesture paths in browser tests.
+
+## 2026-07-10
+### 16:23:55
+- Request: Update the main splash page's Mortgage Paydown picture to match the calculator's current design.
+- Assessment: Replace the obsolete forest-green miniature with a faithful, responsive Cobalt Ledger representation of the current calculator rather than introducing a raster screenshot that would scale poorly.
+- Work completed:
+  - Rebuilt the splash preview with the current three headline metrics, default loan and extra-payment inputs, two-panel payment and balance chart, selected-year context, and full chart legend.
+  - Matched the current cobalt, lime-delta, slate-principal, hatched-teal, terracotta-interest, and dashed-original visual encodings while preserving the gallery's existing hover motion.
+  - Rendered and inspected the preview at desktop and phone sizes, verified the displayed default values, and added browser coverage for responsive fit, palette semantics, chart structure, and overflow.
