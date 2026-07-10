@@ -134,3 +134,11 @@
 - Work completed:
   - Added a responsive Designscapes gallery landing page with full-bleed media, coded project previews, restrained motion, and direct routes to both demos.
   - Preserved Horizon Pier under `demos/horizon-pier/`, added Mortgage Paydown under `demos/mortgage-paydown/`, added return navigation, documentation, and four passing calculation tests.
+
+## 2026-07-09
+### 18:05:09
+- Request: Implement the adversarial review's high-priority desktop and mobile recommendations for Mortgage Paydown.
+- Assessment: Improve financial transparency, mobile input ergonomics, chart interpretation, accessibility, and defensible privacy language without changing the validated amortization model.
+- Work completed:
+  - Added a sticky three-metric summary with payment burden, replaced 360-step month sliders with year/month pickers, enlarged touch targets, and shortened the mobile introduction.
+  - Split annual payments and remaining balance into aligned chart panels, removed mobile chart tapping, fixed live-region behavior and contrast, clarified P&I/PMI exclusions, and removed third-party font requests from the calculator.

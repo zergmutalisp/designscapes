@@ -9,6 +9,13 @@ import { calculateMortgage } from './mortgage-core.js';
   const chartShell = byId('chart-shell');
   const tooltip = byId('chart-tooltip');
   const inspectYear = byId('inspect-year');
+  const calculationStatus = byId('calculation-status');
+  const pickers = {
+    startYear: byId('start-year'),
+    startMonth: byId('start-month-in-year'),
+    endYear: byId('end-year'),
+    endMonth: byId('end-month-in-year')
+  };
 
   const pairs = {
     price: {
@@ -26,14 +33,6 @@ import { calculateMortgage } from './mortgage-core.js';
     extra: {
       range: byId('extra-payment-range'),
       number: byId('extra-payment-number')
-    },
-    start: {
-      range: byId('start-month-range'),
-      number: byId('start-month-number')
-    },
-    end: {
-      range: byId('end-month-range'),
-      number: byId('end-month-number')
     }
   };
 
@@ -49,6 +48,7 @@ import { calculateMortgage } from './mortgage-core.js';
   let displayedOriginal = [];
   let chartAnimation = 0;
   let chartLayout = null;
+  let statusTimer = 0;
 
   function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
@@ -79,6 +79,36 @@ import { calculateMortgage } from './mortgage-core.js';
     const year = Math.ceil(month / 12);
     const monthInYear = ((month - 1) % 12) + 1;
     return `Year ${year}, month ${monthInYear}`;
+  }
+
+  function pickerMonth(prefix) {
+    const year = Number(pickers[`${prefix}Year`].value);
+    const month = Number(pickers[`${prefix}Month`].value);
+    return (year - 1) * 12 + month;
+  }
+
+  function setPickerMonth(prefix, loanMonth) {
+    const normalized = clamp(Math.round(loanMonth), 1, 360);
+    pickers[`${prefix}Year`].value = String(Math.ceil(normalized / 12));
+    pickers[`${prefix}Month`].value = String(((normalized - 1) % 12) + 1);
+  }
+
+  function populatePickers() {
+    const yearOptions = Array.from({ length: 30 }, (_, index) => {
+      const year = index + 1;
+      return `<option value="${year}">Year ${year}</option>`;
+    }).join('');
+    const monthOptions = Array.from({ length: 12 }, (_, index) => {
+      const month = index + 1;
+      return `<option value="${month}">Month ${month}</option>`;
+    }).join('');
+
+    pickers.startYear.innerHTML = yearOptions;
+    pickers.endYear.innerHTML = yearOptions;
+    pickers.startMonth.innerHTML = monthOptions;
+    pickers.endMonth.innerHTML = monthOptions;
+    setPickerMonth('start', 13);
+    setPickerMonth('end', 360);
   }
 
   function duration(months) {
@@ -114,8 +144,8 @@ import { calculateMortgage } from './mortgage-core.js';
       downPercent: Number(pairs.down.range.value),
       annualRate: Number(pairs.rate.range.value) / 100,
       extraAmount: Number(pairs.extra.range.value),
-      startMonth: Number(pairs.start.range.value),
-      endMonth: Number(pairs.end.range.value)
+      startMonth: pickerMonth('start'),
+      endMonth: pickerMonth('end')
     };
   }
 
@@ -154,22 +184,33 @@ import { calculateMortgage } from './mortgage-core.js';
 
   function updateText() {
     byId('down-payment-note').textContent = `${money.format(model.downPayment)} down · ${money.format(model.principal)} financed`;
-    byId('start-month-note').textContent = monthPosition(model.startMonth);
-    byId('end-month-note').textContent = monthPosition(model.endMonth);
+    byId('start-month-note').textContent = `Loan month ${model.startMonth} · ${monthPosition(model.startMonth)}`;
+    byId('end-month-note').textContent = `Loan month ${model.endMonth} · ${monthPosition(model.endMonth)}`;
 
     animateMetric(byId('interest-saved'), model.interestSaved, value => money.format(value));
+    animateMetric(byId('payment-with-extras'), model.normalPayment + model.extraAmount, value => money.format(value));
     animateMetric(byId('time-saved'), model.monthsSaved, value => shortDuration(Math.round(value)));
     animateMetric(byId('monthly-payment'), model.normalPayment, value => money.format(value));
 
     byId('interest-comparison').textContent = `${money.format(model.plan.totalInterest)} with extras · ${money.format(model.original.totalInterest)} original`;
+    byId('payment-comparison').textContent = `${money.format(model.normalPayment)} base P&I · ${money.format(model.plan.totalExtra)} extra principal contributed`;
     byId('payoff-comparison').textContent = model.monthsSaved
       ? `${duration(model.plan.payoffMonth)} with extras · 30 years original`
-      : 'The extra-payment plan does not change the payoff date';
+      : 'The extra-payment plan does not change the payoff time';
+
+    pairs.price.range.setAttribute('aria-valuetext', money.format(model.price));
+    pairs.down.range.setAttribute('aria-valuetext', `${model.downPercent} percent, ${money.format(model.downPayment)} down`);
+    pairs.rate.range.setAttribute('aria-valuetext', `${(model.annualRate * 100).toFixed(2)} percent annual interest`);
+    pairs.extra.range.setAttribute('aria-valuetext', `${money.format(model.extraAmount)} extra each month`);
 
     const savingsPercent = model.original.totalInterest
       ? Math.round(model.interestSaved / model.original.totalInterest * 100)
       : 0;
     byId('chart-description').textContent = `The extra-payment plan saves ${money.format(model.interestSaved)}, or ${savingsPercent} percent of original interest, and pays the loan off ${duration(model.monthsSaved)} earlier.`;
+    clearTimeout(statusTimer);
+    statusTimer = window.setTimeout(() => {
+      calculationStatus.textContent = `Updated estimate: ${money.format(model.interestSaved)} interest saved, ${money.format(model.normalPayment + model.extraAmount)} per month during the extra-payment window, and payoff ${duration(model.monthsSaved)} earlier.`;
+    }, reduceMotion.matches ? 0 : 420);
     updateYearDetail();
   }
 
@@ -189,17 +230,22 @@ import { calculateMortgage } from './mortgage-core.js';
     if (!model || !planYears.length || !originalYears.length) return;
 
     const width = Math.max(220, Math.round(chartShell.clientWidth));
-    const height = Math.max(340, Math.round(chartShell.clientHeight));
+    const height = Math.max(400, Math.round(chartShell.clientHeight));
     const compact = width < 520;
     const margin = compact
-      ? { top: 34, right: 44, bottom: 46, left: 42 }
-      : { top: 34, right: 58, bottom: 48, left: 54 };
+      ? { top: 34, right: 12, bottom: 42, left: 42 }
+      : { top: 34, right: 22, bottom: 46, left: 54 };
     const plotLeft = margin.left;
     const plotRight = width - margin.right;
-    const plotTop = margin.top;
-    const plotBottom = height - margin.bottom;
     const plotWidth = plotRight - plotLeft;
-    const plotHeight = plotBottom - plotTop;
+    const panelGap = compact ? 48 : 54;
+    const panelSpace = height - margin.top - margin.bottom - panelGap;
+    const paymentHeight = panelSpace * 0.48;
+    const balanceHeight = panelSpace - paymentHeight;
+    const paymentTop = margin.top;
+    const paymentBottom = paymentTop + paymentHeight;
+    const balanceTop = paymentBottom + panelGap;
+    const balanceBottom = balanceTop + balanceHeight;
     const step = plotWidth / 30;
     const barWidth = Math.max(3, Math.min(18, step * 0.58));
     const annualMax = niceCeiling(Math.max(
@@ -208,33 +254,39 @@ import { calculateMortgage } from './mortgage-core.js';
     ) * 1.05);
     const selectedIndex = Number(inspectYear.value) - 1;
     const xFor = index => plotLeft + step * (index + 0.5);
-    const paymentY = value => plotBottom - value / annualMax * plotHeight;
-    const balanceY = value => plotBottom - value / Math.max(1, model.principal) * plotHeight;
+    const paymentY = value => paymentBottom - value / annualMax * paymentHeight;
+    const balanceY = value => balanceBottom - value / Math.max(1, model.principal) * balanceHeight;
     const planPoints = planYears.map((year, index) => ({ x: xFor(index), y: balanceY(year.balance) }));
     const originalPoints = originalYears.map((year, index) => ({ x: xFor(index), y: balanceY(year.balance) }));
     const selectedPlan = planPoints[selectedIndex];
     const selectedOriginal = originalPoints[selectedIndex];
     const selectedYear = planYears[selectedIndex];
-    const selectedStackTop = paymentY(selectedYear.principal + selectedYear.interest);
     const selectedBandX = xFor(selectedIndex) - step / 2;
 
-    const grid = [0, 0.5, 1].map(ratio => {
-      const y = plotBottom - ratio * plotHeight;
+    const paymentGrid = [0, 0.5, 1].map(ratio => {
+      const y = paymentBottom - ratio * paymentHeight;
       return `
         <line class="grid-line" x1="${plotLeft}" y1="${y}" x2="${plotRight}" y2="${y}"></line>
         <text class="axis-text" x="${plotLeft - 8}" y="${y + 4}" text-anchor="end">${compactCurrency(annualMax * ratio)}</text>
-        <text class="axis-text" x="${plotRight + 8}" y="${y + 4}" text-anchor="start">${compactCurrency(model.principal * ratio)}</text>
       `;
     }).join('');
 
-    const areaPath = `${pathFrom(planPoints)} L${planPoints[planPoints.length - 1].x},${plotBottom} L${planPoints[0].x},${plotBottom} Z`;
+    const balanceGrid = [0, 0.5, 1].map(ratio => {
+      const y = balanceBottom - ratio * balanceHeight;
+      return `
+        <line class="grid-line" x1="${plotLeft}" y1="${y}" x2="${plotRight}" y2="${y}"></line>
+        <text class="axis-text" x="${plotLeft - 8}" y="${y + 4}" text-anchor="end">${compactCurrency(model.principal * ratio)}</text>
+      `;
+    }).join('');
+
+    const areaPath = `${pathFrom(planPoints)} L${planPoints[planPoints.length - 1].x},${balanceBottom} L${planPoints[0].x},${balanceBottom} Z`;
 
     const bars = planYears.map((year, index) => {
       const x = xFor(index) - barWidth / 2;
-      const regularHeight = year.regularPrincipal / annualMax * plotHeight;
-      const extraHeight = year.extraPrincipal / annualMax * plotHeight;
-      const interestHeight = year.interest / annualMax * plotHeight;
-      const regularY = plotBottom - regularHeight;
+      const regularHeight = year.regularPrincipal / annualMax * paymentHeight;
+      const extraHeight = year.extraPrincipal / annualMax * paymentHeight;
+      const interestHeight = year.interest / annualMax * paymentHeight;
+      const regularY = paymentBottom - regularHeight;
       const extraY = regularY - extraHeight;
       const interestY = extraY - interestHeight;
 
@@ -243,23 +295,25 @@ import { calculateMortgage } from './mortgage-core.js';
           <rect class="bar-principal" x="${x}" y="${regularY}" width="${barWidth}" height="${Math.max(0, regularHeight)}"></rect>
           <rect class="bar-extra" x="${x}" y="${extraY}" width="${barWidth}" height="${Math.max(0, extraHeight)}"></rect>
           <rect class="bar-interest" x="${x}" y="${interestY}" width="${barWidth}" height="${Math.max(0, interestHeight)}"></rect>
-          <rect class="year-hit" data-year="${index + 1}" x="${xFor(index) - step / 2}" y="${plotTop}" width="${step}" height="${plotHeight}"></rect>
+          <rect class="year-hit" data-year="${index + 1}" x="${xFor(index) - step / 2}" y="${paymentTop}" width="${step}" height="${balanceBottom - paymentTop}"></rect>
         </g>
       `;
     }).join('');
 
-    const xLabels = [1, 5, 10, 15, 20, 25, 30].map(year => `
-      <text class="axis-text" x="${xFor(year - 1)}" y="${plotBottom + 24}" text-anchor="middle">${year}</text>
+    const labelYears = compact ? [1, 10, 20, 30] : [1, 5, 10, 15, 20, 25, 30];
+    const xLabels = labelYears.map(year => `
+      <text class="axis-text" x="${xFor(year - 1)}" y="${balanceBottom + 24}" text-anchor="middle">${year}</text>
     `).join('');
 
     chart.setAttribute('viewBox', `0 0 ${width} ${height}`);
     chart.innerHTML = `
-      <text class="axis-label" x="${plotLeft}" y="14">${compact ? 'Annual paid' : 'Annual payment'}</text>
-      <text class="axis-label" x="${plotRight}" y="14" text-anchor="end">Remaining balance</text>
-      ${grid}
-      <rect class="selected-band" x="${selectedBandX}" y="${plotTop}" width="${step}" height="${plotHeight}"></rect>
-      <path class="plan-area" d="${areaPath}"></path>
+      <text class="axis-label" x="${plotLeft}" y="16">Annual principal and interest</text>
+      <text class="axis-label" x="${plotLeft}" y="${balanceTop - 14}">Remaining mortgage balance</text>
+      <rect class="selected-band" x="${selectedBandX}" y="${paymentTop}" width="${step}" height="${balanceBottom - paymentTop}"></rect>
+      ${paymentGrid}
       ${bars}
+      ${balanceGrid}
+      <path class="plan-area" d="${areaPath}"></path>
       <path class="original-line" d="${pathFrom(originalPoints)}"></path>
       <path class="plan-line" d="${pathFrom(planPoints)}"></path>
       <circle class="selected-point original" cx="${selectedOriginal.x}" cy="${selectedOriginal.y}" r="5"></circle>
@@ -274,20 +328,21 @@ import { calculateMortgage } from './mortgage-core.js';
       positions: planYears.map((year, index) => ({
         x: xFor(index),
         stackTop: paymentY(year.principal + year.interest)
-      })),
-      selectedStackTop
+      }))
     };
 
-    chart.querySelectorAll('.year-hit').forEach(hit => {
-      hit.addEventListener('pointerenter', () => {
-        selectYear(Number(hit.dataset.year));
-        showTooltip(Number(hit.dataset.year));
+    if (!compact) {
+      chart.querySelectorAll('.year-hit').forEach(hit => {
+        hit.addEventListener('pointerenter', () => {
+          selectYear(Number(hit.dataset.year));
+          showTooltip(Number(hit.dataset.year));
+        });
+        hit.addEventListener('click', () => {
+          selectYear(Number(hit.dataset.year));
+          showTooltip(Number(hit.dataset.year));
+        });
       });
-      hit.addEventListener('click', () => {
-        selectYear(Number(hit.dataset.year));
-        showTooltip(Number(hit.dataset.year));
-      });
-    });
+    }
   }
 
   function interpolateYears(start, end, progress) {
@@ -336,6 +391,7 @@ import { calculateMortgage } from './mortgage-core.js';
     const originalYear = model.original.years[index];
     const interestDifference = Math.max(0, originalYear.interest - planYear.interest);
     byId('inspect-year-output').textContent = `Year ${index + 1}`;
+    inspectYear.setAttribute('aria-valuetext', `Mortgage year ${index + 1}`);
     byId('year-detail').textContent = `${money.format(planYear.interest)} interest · ${money.format(interestDifference)} less than original · ${money.format(planYear.extraPrincipal)} extra principal · ${money.format(planYear.balance)} balance`;
   }
 
@@ -385,13 +441,6 @@ import { calculateMortgage } from './mortgage-core.js';
       const value = Number(source.value);
       if (!Number.isFinite(value)) return;
       setPairValue(key, value);
-
-      if (key === 'start' && Number(pairs.start.range.value) > Number(pairs.end.range.value)) {
-        setPairValue('end', Number(pairs.start.range.value));
-      }
-      if (key === 'end' && Number(pairs.end.range.value) < Number(pairs.start.range.value)) {
-        setPairValue('start', Number(pairs.end.range.value));
-      }
       updateModel();
     };
 
@@ -399,6 +448,22 @@ import { calculateMortgage } from './mortgage-core.js';
     pair.number.addEventListener('change', () => handle(pair.number));
     pair.number.addEventListener('blur', () => {
       if (pair.number.value === '') setPairValue(key, Number(pair.range.value));
+    });
+  });
+
+  [pickers.startYear, pickers.startMonth].forEach(picker => {
+    picker.addEventListener('change', () => {
+      const start = pickerMonth('start');
+      if (start > pickerMonth('end')) setPickerMonth('end', start);
+      updateModel();
+    });
+  });
+
+  [pickers.endYear, pickers.endMonth].forEach(picker => {
+    picker.addEventListener('change', () => {
+      const end = pickerMonth('end');
+      if (end < pickerMonth('start')) setPickerMonth('start', end);
+      updateModel();
     });
   });
 
@@ -415,6 +480,7 @@ import { calculateMortgage } from './mortgage-core.js';
   const resizeObserver = new ResizeObserver(() => renderChart());
   resizeObserver.observe(chartShell);
 
+  populatePickers();
   model = calculate();
   displayedPlan = model.plan.years.map(year => ({ ...year }));
   displayedOriginal = model.original.years.map(year => ({ ...year }));

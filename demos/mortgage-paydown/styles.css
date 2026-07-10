@@ -13,7 +13,7 @@
   --principal: #39483d;
   --extra: #0f7a4f;
   --interest: #c8835d;
-  --original: #8d958f;
+  --original: #6f786f;
   --shadow: 0 28px 80px rgba(32, 40, 34, 0.09);
   --radius: 24px;
 }
@@ -31,14 +31,16 @@ body {
   min-width: 320px;
   background: var(--paper);
   color: var(--ink);
-  font-family: "Manrope", system-ui, sans-serif;
+  overflow-x: clip;
+  font-family: "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -112,7 +114,7 @@ a {
 }
 
 main {
-  overflow: hidden;
+  overflow: visible;
 }
 
 .intro {
@@ -137,7 +139,7 @@ main {
 h1,
 h2 {
   margin: 0;
-  font-family: "Newsreader", Georgia, serif;
+  font-family: "Iowan Old Style", Baskerville, "Times New Roman", serif;
   font-weight: 500;
   letter-spacing: -0.045em;
   line-height: 0.96;
@@ -165,17 +167,46 @@ h2 {
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(300px, 350px) minmax(0, 1fr);
-  overflow: hidden;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
 }
 
+.calculator > .result-summary {
+  grid-column: 1 / -1;
+  padding: clamp(26px, 4vw, 48px) clamp(28px, 5vw, 70px);
+  background: var(--surface-strong);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
 .controls {
   padding: clamp(28px, 4vw, 46px);
   background: #ede9df;
   border-right: 1px solid var(--line);
+}
+
+.field-label {
+  margin: 0 0 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.month-picker {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.month-picker select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 0.7rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface-strong);
+  color: var(--ink);
+  font-size: 0.82rem;
 }
 
 fieldset {
@@ -219,6 +250,7 @@ legend {
   display: inline-flex;
   align-items: center;
   min-width: 80px;
+  min-height: 44px;
   border-bottom: 1px solid var(--line-strong);
 }
 
@@ -234,6 +266,7 @@ legend {
 
 .number-control input {
   width: 76px;
+  min-height: 44px;
   padding: 0.2rem 0.25rem;
   border: 0;
   outline: 0;
@@ -255,7 +288,7 @@ legend {
 
 input[type="range"] {
   width: 100%;
-  height: 24px;
+  height: 44px;
   margin: 0;
   appearance: none;
   background: transparent;
@@ -269,9 +302,9 @@ input[type="range"]::-webkit-slider-runnable-track {
 }
 
 input[type="range"]::-webkit-slider-thumb {
-  width: 18px;
-  height: 18px;
-  margin-top: -7.5px;
+  width: 22px;
+  height: 22px;
+  margin-top: -9.5px;
   appearance: none;
   border: 4px solid var(--surface-strong);
   border-radius: 50%;
@@ -286,8 +319,8 @@ input[type="range"]::-moz-range-track {
 }
 
 input[type="range"]::-moz-range-thumb {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   border: 4px solid var(--surface-strong);
   border-radius: 50%;
   background: var(--accent);
@@ -295,6 +328,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 input:focus-visible,
+select:focus-visible,
 a:focus-visible {
   outline: 3px solid rgba(15, 122, 79, 0.32);
   outline-offset: 3px;
@@ -321,17 +355,23 @@ a:focus-visible {
 
 .result-summary {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  border-bottom: 1px solid var(--line);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .result-summary article {
   min-width: 0;
-  padding: 0 0 clamp(30px, 4vw, 48px);
+  padding: 0 clamp(18px, 3vw, 46px);
+}
+
+.result-summary article:first-child {
+  padding-left: 0;
+}
+
+.result-summary article:last-child {
+  padding-right: 0;
 }
 
 .result-summary article + article {
-  padding-left: clamp(22px, 5vw, 72px);
   border-left: 1px solid var(--line);
 }
 
@@ -347,8 +387,8 @@ a:focus-visible {
   display: block;
   margin: 0.18rem 0 0.35rem;
   color: var(--accent);
-  font-family: "Newsreader", Georgia, serif;
-  font-size: clamp(2.7rem, 5.7vw, 6.4rem);
+  font-family: "Iowan Old Style", Baskerville, "Times New Roman", serif;
+  font-size: clamp(2.4rem, 4.6vw, 5.2rem);
   font-weight: 500;
   letter-spacing: -0.055em;
   line-height: 1;
@@ -372,13 +412,13 @@ a:focus-visible {
   color: var(--muted);
   font-size: 0.76rem;
   text-align: right;
-  white-space: nowrap;
+  max-width: 220px;
 }
 
 .chart-heading > p strong {
   display: block;
   color: var(--ink);
-  font-family: "Newsreader", Georgia, serif;
+  font-family: "Iowan Old Style", Baskerville, "Times New Roman", serif;
   font-size: 1.8rem;
   font-weight: 500;
   line-height: 1.1;
@@ -386,12 +426,15 @@ a:focus-visible {
 
 .chart-heading > p span {
   display: block;
+  margin-top: 0.25rem;
+  white-space: normal;
+  line-height: 1.45;
 }
 
 .chart-shell {
   position: relative;
   width: 100%;
-  height: 450px;
+  height: 520px;
   margin-top: 1.5rem;
 }
 
@@ -405,7 +448,7 @@ a:focus-visible {
 #paydown-chart .axis-text,
 #paydown-chart .axis-label {
   fill: var(--muted);
-  font-family: "Manrope", system-ui, sans-serif;
+  font-family: "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif;
   font-size: 11px;
 }
 
@@ -521,6 +564,13 @@ a:focus-visible {
   display: inline-flex;
   align-items: center;
   gap: 0.38rem;
+}
+
+.mobile-chart-hint {
+  display: none;
+  margin: 0.8rem 0 0;
+  color: var(--muted);
+  font-size: 0.72rem;
 }
 
 .legend-block {
@@ -712,6 +762,12 @@ footer p {
     grid-template-columns: 1fr;
   }
 
+  .calculator > .result-summary,
+  .controls,
+  .results {
+    grid-column: 1;
+  }
+
   .controls {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -746,11 +802,17 @@ footer p {
   }
 
   .intro {
-    padding-top: 54px;
+    padding: 38px 0 30px;
+    gap: 1rem;
   }
 
   h1 {
-    font-size: clamp(3.2rem, 16vw, 5.5rem);
+    font-size: clamp(2.85rem, 13.5vw, 4.5rem);
+  }
+
+  .intro-copy {
+    font-size: 0.92rem;
+    line-height: 1.55;
   }
 
   .controls {
@@ -763,14 +825,38 @@ footer p {
     border-top: 1px solid var(--line-strong);
   }
 
-  .result-summary {
-    grid-template-columns: 1fr;
+  .calculator > .result-summary {
+    position: sticky;
+    top: 0;
+    z-index: 8;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: 12px 10px;
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 8px 24px rgba(32, 40, 34, 0.11);
+  }
+
+  .result-summary article {
+    padding: 0 8px;
   }
 
   .result-summary article + article {
-    padding: 26px 0 34px;
-    border-top: 1px solid var(--line);
-    border-left: 0;
+    border-left: 1px solid var(--line);
+  }
+
+  .result-summary p {
+    min-height: 2.4em;
+    font-size: 0.58rem;
+    line-height: 1.2;
+  }
+
+  .result-summary strong {
+    margin: 0.2rem 0 0;
+    font-size: clamp(1.25rem, 6.1vw, 1.65rem);
+    letter-spacing: -0.04em;
+  }
+
+  .result-summary span {
+    display: none;
   }
 
   .chart-heading {
@@ -784,7 +870,15 @@ footer p {
   }
 
   .chart-shell {
-    height: 390px;
+    height: 440px;
+  }
+
+  #paydown-chart .year-hit {
+    pointer-events: none;
+  }
+
+  .mobile-chart-hint {
+    display: block;
   }
 
   .method dl {

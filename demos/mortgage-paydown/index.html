@@ -6,9 +6,6 @@
   <meta name="description" content="See how extra mortgage payments change lifetime interest and payoff timing.">
   <meta name="theme-color" content="#f2efe7">
   <title>Mortgage Paydown — Extra Payment Calculator</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&amp;family=Newsreader:opsz,wght@6..72,500&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script type="module" src="app.js"></script>
 </head>
@@ -25,7 +22,7 @@
     </a>
     <div class="site-header-meta">
       <a href="../../">← All demos</a>
-      <p>Private by design. Your numbers stay in your browser.</p>
+      <p>Your calculator inputs stay in your browser. No analytics.</p>
     </div>
   </header>
 
@@ -35,10 +32,28 @@
         <p class="eyebrow">Extra payment calculator</p>
         <h1 id="page-title">See what an extra payment changes.</h1>
       </div>
-      <p class="intro-copy">Compare the interest, payoff date, and yearly balance of a standard 30-year mortgage with a payment plan you control.</p>
+      <p class="intro-copy">Compare the interest, payoff time, and yearly balance of a standard 30-year mortgage with a payment plan you control.</p>
     </section>
 
     <section class="calculator" id="calculator" aria-label="Mortgage extra payment calculator">
+      <div class="result-summary">
+        <article>
+          <p>Lifetime interest saved</p>
+          <strong id="interest-saved">$269,474</strong>
+          <span id="interest-comparison">$240,704 with extras · $510,178 original</span>
+        </article>
+        <article>
+          <p>Monthly during extra payments</p>
+          <strong id="payment-with-extras">$3,528</strong>
+          <span id="payment-comparison">$2,528 base P&amp;I · $172,974 extra principal contributed</span>
+        </article>
+        <article>
+          <p>Paid off earlier</p>
+          <strong id="time-saved">14 yr 7 mo</strong>
+          <span id="payoff-comparison">15 years 5 months with extras · 30 years original</span>
+        </article>
+      </div>
+
       <aside class="controls" aria-label="Calculator inputs">
         <fieldset>
           <legend>Loan details</legend>
@@ -93,25 +108,33 @@
           </div>
 
           <div class="field">
-            <div class="field-heading">
-              <label for="start-month-range">Start month</label>
-              <div class="number-control">
-                <input id="start-month-number" type="number" min="1" max="360" step="1" value="13" inputmode="numeric" aria-label="First month with an extra payment">
-              </div>
+            <p class="field-label" id="start-picker-label">Extra payments start</p>
+            <div class="month-picker" role="group" aria-labelledby="start-picker-label">
+              <label class="sr-only" for="start-year">Start year</label>
+              <select id="start-year" aria-describedby="start-month-note">
+                <option value="2" selected>Year 2</option>
+              </select>
+              <label class="sr-only" for="start-month-in-year">Start month within year</label>
+              <select id="start-month-in-year" aria-describedby="start-month-note">
+                <option value="1" selected>Month 1</option>
+              </select>
             </div>
-            <input id="start-month-range" type="range" min="1" max="360" step="1" value="13">
-            <p class="field-note" id="start-month-note"></p>
+            <p class="field-note" id="start-month-note">Loan month 13</p>
           </div>
 
           <div class="field">
-            <div class="field-heading">
-              <label for="end-month-range">End month</label>
-              <div class="number-control">
-                <input id="end-month-number" type="number" min="1" max="360" step="1" value="360" inputmode="numeric" aria-label="Last month with an extra payment">
-              </div>
+            <p class="field-label" id="end-picker-label">Extra payments end</p>
+            <div class="month-picker" role="group" aria-labelledby="end-picker-label">
+              <label class="sr-only" for="end-year">End year</label>
+              <select id="end-year" aria-describedby="end-month-note">
+                <option value="30" selected>Year 30</option>
+              </select>
+              <label class="sr-only" for="end-month-in-year">End month within year</label>
+              <select id="end-month-in-year" aria-describedby="end-month-note">
+                <option value="12" selected>Month 12</option>
+              </select>
             </div>
-            <input id="end-month-range" type="range" min="1" max="360" step="1" value="360">
-            <p class="field-note" id="end-month-note"></p>
+            <p class="field-note" id="end-month-note">Loan month 360</p>
           </div>
         </fieldset>
 
@@ -119,25 +142,12 @@
       </aside>
 
       <div class="results">
-        <div class="result-summary" aria-live="polite">
-          <article>
-            <p>Lifetime interest saved</p>
-            <strong id="interest-saved">$269,474</strong>
-            <span id="interest-comparison">$240,704 with extras · $510,178 original</span>
-          </article>
-          <article>
-            <p>Paid off earlier</p>
-            <strong id="time-saved">14 yr 7 mo</strong>
-            <span id="payoff-comparison">15 years 5 months with extras · 30 years original</span>
-          </article>
-        </div>
-
         <div class="chart-heading">
           <div>
             <p class="eyebrow">Thirty-year view</p>
-            <h2>Where every payment goes</h2>
+            <h2>Payments and balance</h2>
           </div>
-          <p>Standard payment <strong id="monthly-payment">$2,528</strong><span>/month</span></p>
+          <p>Monthly principal &amp; interest <strong id="monthly-payment">$2,528</strong><span>Taxes, insurance, PMI, and fees excluded</span></p>
         </div>
 
         <div class="chart-shell" id="chart-shell">
@@ -153,6 +163,8 @@
           <span><i class="legend-line original"></i>Original balance</span>
         </div>
 
+        <p class="mobile-chart-hint">Use the year control below to inspect the chart on a phone.</p>
+
         <div class="year-inspector">
           <div class="inspector-heading">
             <label for="inspect-year">Inspect year</label>
@@ -164,6 +176,7 @@
 
         <p class="sr-only" id="chart-title">Mortgage payment and balance comparison</p>
         <p class="sr-only" id="chart-description"></p>
+        <p class="sr-only" id="calculation-status" aria-live="polite" aria-atomic="true"></p>
       </div>
     </section>
 
@@ -183,7 +196,7 @@
         </div>
         <div>
           <dt>Housing costs excluded</dt>
-          <dd>Taxes, insurance, HOA fees, closing costs, and prepayment penalties are not included.</dd>
+          <dd>Taxes, homeowners insurance, mortgage insurance or PMI, HOA fees, closing costs, and prepayment penalties are not included.</dd>
         </div>
       </dl>
     </section>
@@ -191,7 +204,7 @@
 
   <footer>
     <p>Mortgage Paydown is an educational estimate, not financial advice. Confirm payment rules with your lender.</p>
-    <p>No accounts. No tracking. No data leaves this page.</p>
+    <p>No accounts or analytics. Your calculator inputs stay in your browser.</p>
   </footer>
 </body>
 </html>
