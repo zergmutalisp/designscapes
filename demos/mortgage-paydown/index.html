@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="See how extra mortgage payments change lifetime interest and payoff timing.">
+  <meta name="theme-color" content="#f2efe7">
+  <title>Mortgage Paydown — Extra Payment Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&amp;family=Newsreader:opsz,wght@6..72,500&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#calculator">Skip to calculator</a>
+
+  <header class="site-header" id="top">
+    <a class="brand" href="#top" aria-label="Mortgage Paydown home">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M5 15.5 16 6l11 9.5v10.25a1.25 1.25 0 0 1-1.25 1.25H6.25A1.25 1.25 0 0 1 5 25.75Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        <path d="m10 20 4 3 8-9" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Mortgage Paydown</span>
+    </a>
+    <div class="site-header-meta">
+      <a href="../../">← All demos</a>
+      <p>Private by design. Your numbers stay in your browser.</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">Extra payment calculator</p>
+        <h1 id="page-title">See what an extra payment changes.</h1>
+      </div>
+      <p class="intro-copy">Compare the interest, payoff date, and yearly balance of a standard 30-year mortgage with a payment plan you control.</p>
+    </section>
+
+    <section class="calculator" id="calculator" aria-label="Mortgage extra payment calculator">
+      <aside class="controls" aria-label="Calculator inputs">
+        <fieldset>
+          <legend>Loan details</legend>
+
+          <div class="field">
+            <div class="field-heading">
+              <label for="home-price-range">Home price</label>
+              <div class="number-control currency-control">
+                <span aria-hidden="true">$</span>
+                <input id="home-price-number" type="number" min="100000" max="2000000" step="10000" value="500000" inputmode="numeric" aria-label="Home price in dollars">
+              </div>
+            </div>
+            <input id="home-price-range" type="range" min="100000" max="2000000" step="10000" value="500000">
+          </div>
+
+          <div class="field">
+            <div class="field-heading">
+              <label for="down-payment-range">Down payment</label>
+              <div class="number-control suffix-control">
+                <input id="down-payment-number" type="number" min="0" max="40" step="1" value="20" inputmode="numeric" aria-label="Down payment percentage">
+                <span aria-hidden="true">%</span>
+              </div>
+            </div>
+            <input id="down-payment-range" type="range" min="0" max="40" step="1" value="20">
+            <p class="field-note" id="down-payment-note"></p>
+          </div>
+
+          <div class="field">
+            <div class="field-heading">
+              <label for="interest-rate-range">Interest rate</label>
+              <div class="number-control suffix-control">
+                <input id="interest-rate-number" type="number" min="2" max="10" step="0.05" value="6.5" inputmode="decimal" aria-label="Annual interest rate percentage">
+                <span aria-hidden="true">%</span>
+              </div>
+            </div>
+            <input id="interest-rate-range" type="range" min="2" max="10" step="0.05" value="6.5">
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Extra payment plan</legend>
+
+          <div class="field">
+            <div class="field-heading">
+              <label for="extra-payment-range">Extra each month</label>
+              <div class="number-control currency-control">
+                <span aria-hidden="true">$</span>
+                <input id="extra-payment-number" type="number" min="0" max="5000" step="100" value="1000" inputmode="numeric" aria-label="Extra monthly payment in dollars">
+              </div>
+            </div>
+            <input id="extra-payment-range" type="range" min="0" max="5000" step="100" value="1000">
+          </div>
+
+          <div class="field">
+            <div class="field-heading">
+              <label for="start-month-range">Start month</label>
+              <div class="number-control">
+                <input id="start-month-number" type="number" min="1" max="360" step="1" value="13" inputmode="numeric" aria-label="First month with an extra payment">
+              </div>
+            </div>
+            <input id="start-month-range" type="range" min="1" max="360" step="1" value="13">
+            <p class="field-note" id="start-month-note"></p>
+          </div>
+
+          <div class="field">
+            <div class="field-heading">
+              <label for="end-month-range">End month</label>
+              <div class="number-control">
+                <input id="end-month-number" type="number" min="1" max="360" step="1" value="360" inputmode="numeric" aria-label="Last month with an extra payment">
+              </div>
+            </div>
+            <input id="end-month-range" type="range" min="1" max="360" step="1" value="360">
+            <p class="field-note" id="end-month-note"></p>
+          </div>
+        </fieldset>
+
+        <p class="control-footnote">Extra payments are applied directly to principal after the scheduled monthly payment.</p>
+      </aside>
+
+      <div class="results">
+        <div class="result-summary" aria-live="polite">
+          <article>
+            <p>Lifetime interest saved</p>
+            <strong id="interest-saved">$269,474</strong>
+            <span id="interest-comparison">$240,704 with extras · $510,178 original</span>
+          </article>
+          <article>
+            <p>Paid off earlier</p>
+            <strong id="time-saved">14 yr 7 mo</strong>
+            <span id="payoff-comparison">15 years 5 months with extras · 30 years original</span>
+          </article>
+        </div>
+
+        <div class="chart-heading">
+          <div>
+            <p class="eyebrow">Thirty-year view</p>
+            <h2>Where every payment goes</h2>
+          </div>
+          <p>Standard payment <strong id="monthly-payment">$2,528</strong><span>/month</span></p>
+        </div>
+
+        <div class="chart-shell" id="chart-shell">
+          <svg id="paydown-chart" role="img" aria-labelledby="chart-title chart-description"></svg>
+          <div class="chart-tooltip" id="chart-tooltip" role="status" hidden></div>
+        </div>
+
+        <div class="chart-legend" aria-label="Chart legend">
+          <span><i class="legend-block principal"></i>Regular principal</span>
+          <span><i class="legend-block extra"></i>Extra principal</span>
+          <span><i class="legend-block interest"></i>Interest</span>
+          <span><i class="legend-line accelerated"></i>Balance with extras</span>
+          <span><i class="legend-line original"></i>Original balance</span>
+        </div>
+
+        <div class="year-inspector">
+          <div class="inspector-heading">
+            <label for="inspect-year">Inspect year</label>
+            <output id="inspect-year-output" for="inspect-year">Year 2</output>
+          </div>
+          <input id="inspect-year" type="range" min="1" max="30" step="1" value="2">
+          <p id="year-detail" aria-live="polite">$25,205 interest · $364 less than original · $12,000 extra principal · $378,395 balance</p>
+        </div>
+
+        <p class="sr-only" id="chart-title">Mortgage payment and balance comparison</p>
+        <p class="sr-only" id="chart-description"></p>
+      </div>
+    </section>
+
+    <section class="method" aria-labelledby="method-title">
+      <div>
+        <p class="eyebrow">Calculation notes</p>
+        <h2 id="method-title">What this estimate assumes.</h2>
+      </div>
+      <dl>
+        <div>
+          <dt>Fixed-rate loan</dt>
+          <dd>Interest accrues monthly on the remaining principal over a 30-year term.</dd>
+        </div>
+        <div>
+          <dt>Extras reduce principal</dt>
+          <dd>Additional payments do not replace the normal payment and stop when the loan is paid off.</dd>
+        </div>
+        <div>
+          <dt>Housing costs excluded</dt>
+          <dd>Taxes, insurance, HOA fees, closing costs, and prepayment penalties are not included.</dd>
+        </div>
+      </dl>
+    </section>
+  </main>
+
+  <footer>
+    <p>Mortgage Paydown is an educational estimate, not financial advice. Confirm payment rules with your lender.</p>
+    <p>No accounts. No tracking. No data leaves this page.</p>
+  </footer>
+</body>
+</html>

@@ -126,3 +126,11 @@
   - Added `uploads/always-night-lamps.jpg` and used it for the `Always` gallery image.
   - Made `Dawn` the lead gallery image with `Reflection` and `Always` as supporting images.
   - Added subtle editorial image grading, slow hero drift, mobile hero line breaks, and a quieter footer.
+
+## 2026-07-09
+### 17:31:12
+- Request: Repurpose Designscapes into a demo gallery containing the mortgage visualization and the existing digital newspaper advertisement.
+- Assessment: Preserve Horizon Pier as its own route, add the tested Mortgage Paydown tool as a second route, and replace the root page with an editorial two-demo index.
+- Work completed:
+  - Added a responsive Designscapes gallery landing page with full-bleed media, coded project previews, restrained motion, and direct routes to both demos.
+  - Preserved Horizon Pier under `demos/horizon-pier/`, added Mortgage Paydown under `demos/mortgage-paydown/`, added return navigation, documentation, and four passing calculation tests.
