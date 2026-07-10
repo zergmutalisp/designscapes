@@ -4,6 +4,13 @@ test('shows the current Cobalt Ledger mortgage calculator on the gallery card', 
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('');
 
+  await expect(page.locator('.site-nav')).toHaveText('Designscapes');
+  await expect(page.getByRole('link', { name: 'Browse work' })).toHaveCount(0);
+  await expect(page.getByText('Selected demos')).toHaveCount(0);
+  const pierArticle = page.locator('.project').filter({ has: page.getByRole('heading', { name: 'Horizon Pier' }) });
+  await expect(pierArticle).toContainText('A fictional pier destination rendered as an editorial advertisement.');
+  await expect(page.getByRole('link', { name: 'GitHub', exact: true })).toHaveText('GitHub');
+
   const heading = page.getByRole('heading', { name: 'Mortgage Paydown' });
   await heading.scrollIntoViewIfNeeded();
   const preview = page.locator('.mortgage-preview');
