@@ -248,3 +248,12 @@
   - Restored at least 150px of plotting height to each desktop and tablet chart panel, kept the 440px mobile chart, and ensured the legend remains inside the results panel.
   - Changed initialization, reset behavior, static values, gallery preview, calculations, and tests to use Year 1, Month 2 and the resulting $286,709 interest savings estimate.
   - Added adversarially recommended regressions for desktop plot geometry, the 821px breakpoint, responsive overflow, legend containment, and synchronized default controls.
+
+## 2026-07-10
+### 12:47:19
+- Request: Separate temporary chart hovering from persistent year-inspector selection, committing a new inspector year only when the chart is clicked.
+- Assessment: Treat hover as a reversible tooltip preview and preserve the slider, selected band, and detail table as explicit committed state until click or keyboard input changes them.
+- Work completed:
+  - Removed the year-selection update from chart pointer entry while retaining the year-specific hover tooltip.
+  - Kept click-to-select behavior synchronized across the chart marker, inspector slider, and exact-value detail table.
+  - Added a browser regression proving hover and pointer exit preserve the selected year while click commits and retains a new year.

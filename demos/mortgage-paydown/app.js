@@ -451,7 +451,6 @@ import { calculateMortgage } from './mortgage-core.js';
     if (!compact) {
       chart.querySelectorAll('.year-hit').forEach(hit => {
         hit.addEventListener('pointerenter', () => {
-          selectYear(Number(hit.dataset.year));
           showTooltip(Number(hit.dataset.year));
         });
         hit.addEventListener('click', () => {

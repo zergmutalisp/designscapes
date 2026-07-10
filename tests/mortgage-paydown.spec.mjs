@@ -67,6 +67,36 @@ test('shows verified defaults and a keyboard-readable desktop inspector', async 
   await expect(page.locator('#year-detail-status')).toContainText('original schedule');
 });
 
+test('treats chart hover as temporary and commits the inspector only on click', async ({ page }) => {
+  await openCalculator(page, { width: 1440, height: 900 });
+
+  const inspector = page.getByRole('slider', { name: 'Inspect year' });
+  const tooltip = page.locator('#chart-tooltip');
+  const yearEight = page.locator('.year-hit[data-year="8"]');
+  const initialBalance = await page.locator('#year-balance').textContent();
+
+  await yearEight.hover();
+  await expect(tooltip).toBeVisible();
+  await expect(tooltip).toContainText('Year 8');
+  await expect(inspector).toHaveValue('2');
+  await expect(page.locator('#inspect-year-output')).toHaveText('Year 2');
+  await expect(page.locator('#year-balance')).toHaveText(initialBalance);
+
+  await page.locator('.chart-heading').hover();
+  await expect(tooltip).toBeHidden();
+  await expect(inspector).toHaveValue('2');
+
+  await yearEight.click();
+  await expect(inspector).toHaveValue('8');
+  await expect(page.locator('#inspect-year-output')).toHaveText('Year 8');
+  await expect(page.locator('#year-balance')).not.toHaveText(initialBalance);
+
+  await page.locator('.chart-heading').hover();
+  await expect(tooltip).toBeHidden();
+  await expect(inspector).toHaveValue('8');
+  await expect(page.locator('#inspect-year-output')).toHaveText('Year 8');
+});
+
 test('does not advertise an extra payment when the selected window cannot apply one', async ({ page }) => {
   await openCalculator(page);
 
