@@ -228,24 +228,7 @@ h3 {
 .projects {
   width: min(1480px, calc(100% - 48px));
   margin: 0 auto;
-  padding: clamp(96px, 13vw, 190px) 0;
-}
-
-.projects-intro {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.42fr);
-  align-items: end;
-  gap: clamp(3rem, 9vw, 10rem);
-  padding-bottom: clamp(80px, 10vw, 130px);
-}
-
-.projects-intro > p {
-  max-width: 440px;
-  margin: 0 0 0.7rem;
-  color: var(--muted);
-  font-size: 0.95rem;
-  font-weight: 300;
-  line-height: 1.8;
+  padding: 0 0 clamp(48px, 6vw, 88px);
 }
 
 .project {
@@ -511,21 +494,6 @@ h3 {
   font-weight: 300;
 }
 
-.closing {
-  width: min(920px, calc(100% - 48px));
-  margin: 0 auto;
-  padding: clamp(110px, 15vw, 220px) 0;
-  text-align: center;
-}
-
-.closing p:not(.kicker) {
-  max-width: 650px;
-  margin: 2rem auto 1.8rem;
-  color: var(--muted);
-  font-weight: 300;
-  line-height: 1.8;
-}
-
 footer {
   width: min(1480px, calc(100% - 48px));
   margin: 0 auto;
@@ -579,14 +547,9 @@ footer p:last-child {
     display: none;
   }
 
-  .projects-intro,
   .project,
   .project-reverse {
     grid-template-columns: 1fr;
-  }
-
-  .projects-intro {
-    gap: 2rem;
   }
 
   .project-copy,
@@ -682,13 +645,15 @@ footer p:last-child {
     left: 22px;
   }
 
-  .closing {
-    width: calc(100% - 30px);
-  }
-
   footer {
     width: calc(100% - 30px);
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  footer .text-link {
+    justify-self: start;
+    white-space: nowrap;
   }
 
   footer p:first-of-type {

@@ -203,3 +203,12 @@
   - Removed the hero headline and its obsolete accessibility reference.
   - Added the requested sentence verbatim and tightened its size and spacing for the reduced copy composition.
   - Verified the minimal hero composition and zero overflow at 1440×900 and 390×844.
+
+## 2026-07-09
+### 22:47:20
+- Request: Remove the editorial “Selected work” introduction and closing Designscapes essay while retaining the Mortgage Paydown and Horizon Pier demos, then move the animated GitHub source link into the footer.
+- Assessment: Let the two demos follow the hero directly and end the page with one functional source link instead of additional magazine-style framing copy.
+- Work completed:
+  - Removed the full demos-introduction and closing-copy sections without changing either demo entry.
+  - Tightened the projects section spacing and replaced “Two demos · More to come” with the animated “View the source on GitHub” link.
+  - Preserved the underline interaction and added a clean stacked mobile footer layout with zero horizontal overflow.
