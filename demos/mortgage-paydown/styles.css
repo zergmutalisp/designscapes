@@ -518,6 +518,14 @@ a:focus-visible {
   fill: var(--original);
 }
 
+#paydown-chart .selected-reading {
+  fill: var(--accent);
+  font-family: "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
 #paydown-chart .year-hit {
   fill: transparent;
   cursor: crosshair;
@@ -624,11 +632,60 @@ a:focus-visible {
   color: var(--accent);
 }
 
-.year-inspector p {
-  min-height: 1.5em;
-  margin: 0.25rem 0 0;
+.year-detail {
+  width: min(100%, 680px);
+  margin-top: 0.65rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-strong);
+}
+
+.year-detail dl {
+  margin: 0;
+}
+
+.year-detail dl div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.year-detail dl div + div {
+  margin-top: 0.4rem;
+}
+
+.year-detail [hidden] {
+  display: none;
+}
+
+.year-detail dt {
   color: var(--muted);
-  font-size: 0.76rem;
+  font-size: 0.72rem;
+}
+
+.year-detail dd {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.year-detail-primary dd {
+  color: var(--accent);
+  font-family: "Iowan Old Style", Baskerville, "Times New Roman", serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.year-detail p {
+  margin: 0.75rem 0 0;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.5;
 }
 
 .method {

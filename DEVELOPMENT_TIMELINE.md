@@ -158,3 +158,12 @@
 - Work completed:
   - Added matching cache-busting version parameters to the mortgage calculator stylesheet and module script.
   - Preserved the clean no-build GitHub Pages deployment while forcing browsers to load the current interaction code.
+
+## 2026-07-09
+### 18:51:08
+- Request: Raise the monthly extra-payment ceiling to $30,000 and make the mobile year inspector's readings clearer without overloading the chart.
+- Assessment: Follow the adversarial mobile recommendation: pair one compact in-chart balance reading with one exact-value detail box, while keeping global outcomes in the sticky summary.
+- Work completed:
+  - Extended both monthly extra-payment controls to $30,000 and added a passing ceiling scenario to the amortization test suite.
+  - Added a mobile chart reading, structured year detail for balance, annual interest, annual principal, extra principal and annual interest savings, plus a concise paid-off state.
+  - Limited screen-reader announcements to completed year changes and browser-tested the default, mid-loan, maximum-payment and post-payoff states at 390px.

@@ -59,3 +59,17 @@ test('stops extra payments when the mortgage is paid off', () => {
   assert.ok(result.plan.totalExtra < 5000 * 360);
   assert.equal(result.plan.years[29].balance, 0);
 });
+
+test('supports the public $30,000 monthly extra-payment ceiling', () => {
+  const result = calculateMortgage({
+    ...baseScenario,
+    extraAmount: 30000,
+    startMonth: 1,
+    endMonth: 360
+  });
+
+  assert.ok(result.plan.payoffMonth < 24);
+  assert.ok(result.plan.totalExtra < 30000 * 24);
+  assert.ok(result.interestSaved > 0);
+  assert.equal(result.plan.years[29].balance, 0);
+});

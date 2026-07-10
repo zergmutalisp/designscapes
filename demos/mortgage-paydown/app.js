@@ -262,6 +262,9 @@ import { calculateMortgage } from './mortgage-core.js';
     const selectedOriginal = originalPoints[selectedIndex];
     const selectedYear = planYears[selectedIndex];
     const selectedBandX = xFor(selectedIndex) - step / 2;
+    const selectedReading = compact
+      ? `<text class="selected-reading" x="${plotRight}" y="${paymentBottom + 18}" text-anchor="end">Year ${selectedIndex + 1} · ${selectedYear.balance <= 0.5 ? 'Paid off' : `${compactCurrency(selectedYear.balance)} left`}</text>`
+      : '';
 
     const paymentGrid = [0, 0.5, 1].map(ratio => {
       const y = paymentBottom - ratio * paymentHeight;
@@ -318,6 +321,7 @@ import { calculateMortgage } from './mortgage-core.js';
       <path class="plan-line" d="${pathFrom(planPoints)}"></path>
       <circle class="selected-point original" cx="${selectedOriginal.x}" cy="${selectedOriginal.y}" r="5"></circle>
       <circle class="selected-point plan" cx="${selectedPlan.x}" cy="${selectedPlan.y}" r="5"></circle>
+      ${selectedReading}
       ${xLabels}
       <text class="axis-label" x="${plotLeft + plotWidth / 2}" y="${height - 6}" text-anchor="middle">Mortgage year</text>
     `;
@@ -340,6 +344,7 @@ import { calculateMortgage } from './mortgage-core.js';
         hit.addEventListener('click', () => {
           selectYear(Number(hit.dataset.year));
           showTooltip(Number(hit.dataset.year));
+          updateYearDetail(true);
         });
       });
     }
@@ -384,15 +389,45 @@ import { calculateMortgage } from './mortgage-core.js';
     chartAnimation = requestAnimationFrame(frame);
   }
 
-  function updateYearDetail() {
+  function updateYearDetail(announce = false) {
     if (!model) return;
     const index = Number(inspectYear.value) - 1;
+    const yearNumber = index + 1;
     const planYear = model.plan.years[index];
     const originalYear = model.original.years[index];
     const interestDifference = Math.max(0, originalYear.interest - planYear.interest);
-    byId('inspect-year-output').textContent = `Year ${index + 1}`;
-    inspectYear.setAttribute('aria-valuetext', `Mortgage year ${index + 1}`);
-    byId('year-detail').textContent = `${money.format(planYear.interest)} interest · ${money.format(interestDifference)} less than original · ${money.format(planYear.extraPrincipal)} extra principal · ${money.format(planYear.balance)} balance`;
+    const payoffYear = Math.ceil(model.plan.payoffMonth / 12);
+    const paidOff = planYear.balance <= 0.005;
+    const afterPayoff = yearNumber > payoffYear;
+    const balanceText = paidOff ? 'Paid off' : money.format(planYear.balance);
+
+    byId('inspect-year-output').textContent = `Year ${yearNumber}`;
+    inspectYear.setAttribute('aria-valuetext', paidOff
+      ? `Mortgage year ${yearNumber}, paid off`
+      : `Mortgage year ${yearNumber}, ${money.format(planYear.balance)} remaining`);
+    byId('year-balance').textContent = balanceText;
+    byId('year-interest').textContent = money.format(planYear.interest);
+    byId('year-principal').textContent = money.format(planYear.principal);
+    byId('year-interest-row').hidden = afterPayoff;
+    byId('year-principal-row').hidden = afterPayoff;
+
+    let note;
+    if (afterPayoff) {
+      note = `Loan paid off in Year ${payoffYear}.`;
+    } else {
+      const details = [];
+      if (planYear.extraPrincipal > 0.005) details.push(`Includes ${money.format(planYear.extraPrincipal)} extra principal`);
+      if (interestDifference > 0.005) details.push(`${money.format(interestDifference)} interest saved this year`);
+      if (paidOff) details.push(`Loan paid off during Year ${payoffYear}`);
+      note = details.length ? details.join(' · ') : 'No extra principal scheduled this year.';
+    }
+    byId('year-detail-note').textContent = note;
+
+    if (announce) {
+      byId('year-detail-status').textContent = afterPayoff
+        ? `Year ${yearNumber}. Loan paid off in Year ${payoffYear}.`
+        : `Year ${yearNumber}. ${balanceText} remaining. ${money.format(planYear.interest)} interest and ${money.format(planYear.principal)} principal paid this year.`;
+    }
   }
 
   function selectYear(year) {
@@ -481,6 +516,8 @@ import { calculateMortgage } from './mortgage-core.js';
     updateYearDetail();
     renderChart();
   });
+
+  inspectYear.addEventListener('change', () => updateYearDetail(true));
 
   chartShell.addEventListener('pointerleave', () => {
     tooltip.hidden = true;
