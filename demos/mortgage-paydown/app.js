@@ -565,7 +565,8 @@ import { calculateMortgage } from './mortgage-core.js';
 
   function showDragPreview(year) {
     const band = chart.querySelector('.drag-preview-band');
-    if (!band || !chartLayout || year === null) {
+    const readout = year === null ? null : tooltipReadout(year);
+    if (!band || !chartLayout || !readout) {
       band?.classList.remove('is-visible');
       chartShell.classList.add('is-drag-outside');
       tooltip.hidden = true;
@@ -576,8 +577,9 @@ import { calculateMortgage } from './mortgage-core.js';
     band.setAttribute('x', String(chartLayout.plotLeft + chartLayout.step * (year - 1)));
     band.classList.add('is-visible');
     tooltip.innerHTML = `
+      <span class="drag-cancel">(Drag outside the chart to cancel.)</span>
       <strong>Release to inspect Year ${year}</strong>
-      <span>Drag outside the chart to cancel.</span>
+      ${readout.html}
     `;
     tooltip.hidden = false;
 
@@ -633,28 +635,38 @@ import { calculateMortgage } from './mortgage-core.js';
     clearChartDrag();
   }
 
-  function showTooltip(year) {
-    if (!model || !chartLayout) return;
+  function tooltipReadout(year) {
+    if (!model || !chartLayout) return null;
     const index = year - 1;
     const planYear = model.plan.years[index];
     const originalYear = model.original.years[index];
     const interestDifference = Math.max(0, originalYear.interest - planYear.interest);
     const balanceDifference = Math.max(0, originalYear.balance - planYear.balance);
-    const position = chartLayout.positions[index];
+    return {
+      position: chartLayout.positions[index],
+      html: `
+        <span>${money.format(planYear.balance)} with extras · ${money.format(originalYear.balance)} original</span>
+        <span>${money.format(balanceDifference)} balance reduction</span>
+        <span>${money.format(planYear.interest)} plan interest · ${money.format(interestDifference)} avoided</span>
+        <span>${money.format(planYear.extraPrincipal)} extra principal</span>
+      `
+    };
+  }
+
+  function showTooltip(year) {
+    const readout = tooltipReadout(year);
+    if (!readout) return;
 
     tooltip.innerHTML = `
       <strong>Year ${year}</strong>
-      <span>${money.format(planYear.balance)} with extras · ${money.format(originalYear.balance)} original</span>
-      <span>${money.format(balanceDifference)} balance reduction</span>
-      <span>${money.format(planYear.interest)} plan interest · ${money.format(interestDifference)} avoided</span>
-      <span>${money.format(planYear.extraPrincipal)} extra principal</span>
+      ${readout.html}
     `;
     tooltip.hidden = false;
 
     requestAnimationFrame(() => {
       const bounds = tooltip.getBoundingClientRect();
-      const left = clamp(position.x - bounds.width / 2, 8, chartLayout.width - bounds.width - 8);
-      const top = clamp(position.stackTop - bounds.height - 12, 8, chartLayout.height - bounds.height - 8);
+      const left = clamp(readout.position.x - bounds.width / 2, 8, chartLayout.width - bounds.width - 8);
+      const top = clamp(readout.position.stackTop - bounds.height - 12, 8, chartLayout.height - bounds.height - 8);
       tooltip.style.left = `${left}px`;
       tooltip.style.top = `${top}px`;
     });

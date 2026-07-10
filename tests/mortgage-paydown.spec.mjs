@@ -120,6 +120,12 @@ test('previews a dragged year and commits only when released inside the plot', a
   await expect(inspector).toHaveValue('2');
   await expect(previewBand).toHaveClass(/is-visible/);
   await expect(tooltip).toContainText('Release to inspect Year 11');
+  await expect(tooltip).toContainText('with extras');
+  await expect(tooltip).toContainText('balance reduction');
+  await expect(tooltip).toContainText('plan interest');
+  await expect(tooltip).toContainText('extra principal');
+  const dragTooltipLines = await tooltip.locator(':scope > *').allTextContents();
+  expect(dragTooltipLines[0]).toBe('(Drag outside the chart to cancel.)');
 
   await page.mouse.up();
   await expect(inspector).toHaveValue('11');

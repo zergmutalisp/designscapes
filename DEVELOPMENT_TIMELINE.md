@@ -266,3 +266,12 @@
   - Added a dashed translucent green preview band, grabbing and cancellation cursors, and a “Release to inspect” tooltip that follows the candidate mortgage year.
   - Committed the slider, selected band, and detail table only on primary-button release inside the plotting bounds; outside releases, pointer cancellation, and resize interruption preserve the prior selection.
   - Preserved ordinary click selection and non-mouse tap fallback, then added browser regressions for drag preview, inside release, outside cancellation, and unchanged mobile behavior.
+
+## 2026-07-10
+### 13:06:13
+- Request: Keep the full year-specific financial readout visible during chart dragging and move the cancellation instruction into parentheses at the top of the tooltip.
+- Assessment: Share one exact-value tooltip renderer between hover and drag states, adding only a compact drag instruction and release heading so analytical context remains stable throughout the gesture.
+- Work completed:
+  - Added the parenthetical “Drag outside the chart to cancel” instruction as the first drag-tooltip line.
+  - Restored balance with extras, original balance, balance reduction, plan interest, interest avoided, and extra principal beneath the release heading.
+  - Added regression checks for tooltip order and every retained financial reading, then rendered the expanded tooltip to verify legibility and fit.
