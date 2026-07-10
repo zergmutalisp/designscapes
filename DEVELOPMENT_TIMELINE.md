@@ -230,3 +230,12 @@
   - Added applicable-payment and no-mortgage states, inline validation, reset recovery, synchronized chart updates, richer financial caveats, and exact original-versus-plan yearly comparisons.
   - Restored mobile comparison context and desktop inspector values, removed 320px overflow, retained the flattened single-screen desktop composition, and strengthened focus, control, and chart differentiation.
   - Added eight calculation tests and six Playwright desktop/mobile regressions covering edge windows, 100% down, validation, keyboard inspection, reset behavior, and maximum-value narrow screens.
+
+## 2026-07-10
+### 12:32:57
+- Request: Increase desktop type slightly, make the mortgage charts use the full available width, widen the year inspector, demote the calculation notes, and simplify the privacy statement.
+- Assessment: Rebalance the results pane around a compact top-left title and broad inspector, then make the SVG share the responsive plotting region's actual aspect ratio so the data—not just its container—spans the screen.
+- Work completed:
+  - Increased desktop control, summary, inspector, legend, and axis typography while keeping the results title compact and aligned with a substantially wider year-detail table.
+  - Expanded the plotting canvas on desktop and mobile, removed desktop SVG letterboxing, and flattened the short-desktop chart so the complete calculator remains visible at 1366×768.
+  - Restyled the assumptions as a compact supporting note, replaced the footer privacy copy, and added browser regressions for chart width, internal view-box fit, inspector alignment, phone sizing, and the new copy.

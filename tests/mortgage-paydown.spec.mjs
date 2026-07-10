@@ -19,8 +19,26 @@ test('shows verified defaults and a keyboard-readable desktop inspector', async 
   const detail = page.locator('#year-detail');
   await expect(detail).toBeVisible();
   const detailBox = await detail.boundingBox();
-  expect(detailBox.width).toBeGreaterThan(200);
+  expect(detailBox.width).toBeGreaterThan(650);
   expect(detailBox.height).toBeGreaterThan(60);
+
+  const resultsBox = await page.locator('.results').boundingBox();
+  const chartBox = await page.locator('#chart-shell').boundingBox();
+  const headingBox = await page.locator('.chart-heading').boundingBox();
+  const inspectorBox = await page.locator('.year-inspector').boundingBox();
+  expect(chartBox.width / resultsBox.width).toBeGreaterThan(0.94);
+  expect(Math.abs(headingBox.y - inspectorBox.y)).toBeLessThan(6);
+
+  const chartViewport = await page.locator('#paydown-chart').evaluate(svg => ({
+    clientHeight: svg.clientHeight,
+    viewBoxHeight: svg.viewBox.baseVal.height,
+    clientWidth: svg.clientWidth,
+    viewBoxWidth: svg.viewBox.baseVal.width
+  }));
+  expect(Math.abs(chartViewport.clientHeight - chartViewport.viewBoxHeight)).toBeLessThan(2);
+  expect(Math.abs(chartViewport.clientWidth - chartViewport.viewBoxWidth)).toBeLessThan(2);
+
+  await expect(page.locator('footer')).toContainText('The data entered on this page is not saved anywhere.');
 
   const inspector = page.getByRole('slider', { name: 'Inspect year' });
   await inspector.focus();
@@ -113,11 +131,14 @@ test('retains comparison context and fits maximum values on narrow phones', asyn
   const layout = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
     scrollWidth: document.documentElement.scrollWidth,
+    chartWidth: document.querySelector('#chart-shell').getBoundingClientRect().width,
+    resultsWidth: document.querySelector('.results').getBoundingClientRect().width,
     metricsFit: [...document.querySelectorAll('.result-summary strong')]
       .every(element => element.scrollWidth <= element.clientWidth + 1)
   }));
   expect(layout.scrollWidth).toBe(layout.clientWidth);
   expect(layout.metricsFit).toBe(true);
+  expect(layout.chartWidth / layout.resultsWidth).toBeGreaterThan(0.88);
 
   const extra = page.getByRole('spinbutton', { name: 'Extra monthly payment in dollars' });
   await extra.focus();

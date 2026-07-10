@@ -323,7 +323,8 @@ import { calculateMortgage } from './mortgage-core.js';
     if (!model || !planYears.length || !originalYears.length) return;
 
     const width = Math.max(220, Math.round(chartShell.clientWidth));
-    const height = Math.max(400, Math.round(chartShell.clientHeight));
+    const compact = width < 520;
+    const height = Math.max(compact ? 400 : 180, Math.round(chartShell.clientHeight));
     if (!model.hasLoan) {
       chart.setAttribute('viewBox', `0 0 ${width} ${height}`);
       chart.innerHTML = `
@@ -334,7 +335,6 @@ import { calculateMortgage } from './mortgage-core.js';
       tooltip.hidden = true;
       return;
     }
-    const compact = width < 520;
     const paymentAxisLabel = compact
       ? 'Extra plan: annual P&I'
       : 'Extra-payment plan: annual principal and interest';
