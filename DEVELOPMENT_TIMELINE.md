@@ -167,3 +167,12 @@
   - Extended both monthly extra-payment controls to $30,000 and added a passing ceiling scenario to the amortization test suite.
   - Added a mobile chart reading, structured year detail for balance, annual interest, annual principal, extra principal and annual interest savings, plus a concise paid-off state.
   - Limited screen-reader announcements to completed year changes and browser-tested the default, mid-loan, maximum-payment and post-payoff states at 390px.
+
+## 2026-07-09
+### 19:05:30
+- Request: Rework the janky desktop calculator so outcomes and controls stay at the top while the visualization stretches into a flatter single-screen workspace.
+- Assessment: Convert desktop and tablet widths to a top-controls layout, then use a height-aware desktop composition that fits the full calculator inside the initial viewport without changing the phone experience.
+- Work completed:
+  - Moved all six loan controls into a compact horizontal desktop strip beneath the three outcomes and placed the year inspector beside the chart heading.
+  - Expanded the visualization to the full calculator width, made its height respond to the remaining viewport, and removed the oversized desktop introduction from the working screen.
+  - Verified complete fit at 1180×700, 1280×720, 1366×768, and 1440×900, plus zero-overflow mobile regression at 390×844.
