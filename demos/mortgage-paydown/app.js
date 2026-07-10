@@ -660,10 +660,34 @@ import { calculateMortgage } from './mortgage-core.js';
     return {
       position: chartLayout.positions[index],
       html: `
-        <span>${money.format(planYear.balance)} with extras · ${money.format(originalYear.balance)} original</span>
-        <span>${money.format(balanceDifference)} balance reduction</span>
-        <span>${money.format(planYear.interest)} plan interest · ${money.format(interestDifference)} avoided</span>
-        <span>${money.format(planYear.extraPrincipal)} extra principal</span>
+        <span class="tooltip-row">
+          <i class="tooltip-key tooltip-line tooltip-line-plan" aria-hidden="true"></i>
+          <span><b>${money.format(planYear.balance)}</b> balance with extras</span>
+        </span>
+        <span class="tooltip-row">
+          <i class="tooltip-key tooltip-line tooltip-line-original" aria-hidden="true"></i>
+          <span><b>${money.format(originalYear.balance)}</b> original balance</span>
+        </span>
+        <span class="tooltip-row tooltip-delta">
+          <i class="tooltip-key tooltip-key-delta" aria-hidden="true"></i>
+          <span><b>${money.format(balanceDifference)}</b> balance reduction</span>
+        </span>
+        <span class="tooltip-row">
+          <i class="tooltip-key tooltip-key-interest" aria-hidden="true"></i>
+          <span><b>${money.format(planYear.interest)}</b> plan interest</span>
+        </span>
+        <span class="tooltip-row tooltip-delta">
+          <i class="tooltip-key tooltip-key-delta" aria-hidden="true"></i>
+          <span><b>${money.format(interestDifference)}</b> interest avoided</span>
+        </span>
+        <span class="tooltip-row">
+          <i class="tooltip-key tooltip-key-principal" aria-hidden="true"></i>
+          <span><b>${money.format(planYear.regularPrincipal)}</b> regular principal</span>
+        </span>
+        <span class="tooltip-row">
+          <i class="tooltip-key tooltip-key-extra" aria-hidden="true"></i>
+          <span><b>${money.format(planYear.extraPrincipal)}</b> extra principal</span>
+        </span>
       `
     };
   }

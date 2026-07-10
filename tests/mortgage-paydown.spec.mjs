@@ -134,6 +134,33 @@ test('treats chart hover as temporary and commits the inspector only on click', 
   await yearEight.hover();
   await expect(tooltip).toBeVisible();
   await expect(tooltip).toContainText('Year 8');
+  await expect(tooltip.locator('.tooltip-row')).toHaveCount(7);
+  await expect(tooltip).toContainText('$230,820 balance with extras');
+  await expect(tooltip).toContainText('$354,627 original balance');
+  await expect(tooltip).toContainText('$123,807 balance reduction');
+  await expect(tooltip).toContainText('$15,942 plan interest');
+  await expect(tooltip).toContainText('$7,359 interest avoided');
+  await expect(tooltip).toContainText('$14,397 regular principal');
+  await expect(tooltip).toContainText('$12,000 extra principal');
+  const tooltipKeys = await tooltip.evaluate(element => {
+    const style = selector => getComputedStyle(element.querySelector(selector));
+    return {
+      plan: [style('.tooltip-line-plan').borderTopColor, style('.tooltip-line-plan').borderTopStyle],
+      original: [style('.tooltip-line-original').borderTopColor, style('.tooltip-line-original').borderTopStyle],
+      delta: style('.tooltip-key-delta').backgroundColor,
+      interest: style('.tooltip-key-interest').backgroundColor,
+      principal: style('.tooltip-key-principal').backgroundColor,
+      extraPattern: style('.tooltip-key-extra').backgroundImage
+    };
+  });
+  expect(tooltipKeys).toEqual({
+    plan: ['rgb(49, 92, 155)', 'solid'],
+    original: ['rgb(119, 127, 139)', 'dashed'],
+    delta: 'rgb(62, 107, 0)',
+    interest: 'rgb(183, 92, 62)',
+    principal: 'rgb(62, 72, 87)',
+    extraPattern: expect.stringContaining('repeating-linear-gradient')
+  });
   await expect(inspector).toHaveValue('2');
   await expect(page.locator('#inspect-year-output')).toHaveText('Year 2');
   await expect(page.locator('#year-balance')).toHaveText(initialBalance);

@@ -310,3 +310,12 @@
   - Reordered the selector with Cobalt Ledger first while preserving it as the default.
   - Removed the neon marker from Interest saved and Balance reduction while keeping their conditional dark-lime text treatment.
   - Rendered the revised hierarchy at desktop and phone sizes and added regressions for option order and the absence of residual underline styling.
+
+## 2026-07-10
+### 14:05:33
+- Request: Color- and pattern-code the chart's point-in-time readout so each value can be associated quickly with its corresponding bar or line.
+- Assessment: Use the chart's existing semantic tokens as redundant keys beside explicit labels, preserve lime for positive deltas, and add the missing regular-principal value so every annual payment segment is represented.
+- Work completed:
+  - Rebuilt the hover, click, and drag readout as a seven-row keyed display for both balances, balance reduction, interest, interest avoided, regular principal, and extra principal.
+  - Matched the tooltip keys to the chart's solid plan line, dashed original line, terracotta interest, slate principal, and hatched teal extra-principal encoding across all four themes.
+  - Verified representative Year 8 values against the amortization model, inspected the rendered desktop result, and added browser regressions for labels, values, colors, line styles, and hatch pattern.

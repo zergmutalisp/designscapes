@@ -736,7 +736,7 @@ button:focus-visible {
 .chart-tooltip {
   position: absolute;
   z-index: 4;
-  width: min(220px, calc(100% - 20px));
+  width: min(248px, calc(100% - 20px));
   padding: 0.8rem 0.9rem;
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -753,12 +753,86 @@ button:focus-visible {
 }
 
 .chart-tooltip strong {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.45rem;
   font-size: 0.8rem;
 }
 
 .chart-tooltip span {
   color: var(--muted);
+}
+
+.chart-tooltip .tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  line-height: 1.35;
+}
+
+.chart-tooltip .tooltip-row + .tooltip-row {
+  margin-top: 0.27rem;
+}
+
+.chart-tooltip .tooltip-row > span {
+  min-width: 0;
+  color: inherit;
+}
+
+.chart-tooltip .tooltip-row b {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+}
+
+.chart-tooltip .tooltip-delta b {
+  color: var(--gain-ink);
+}
+
+.tooltip-key {
+  flex: 0 0 auto;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.tooltip-line {
+  width: 15px;
+  height: 0;
+  border-top: 2px solid;
+  border-radius: 0;
+}
+
+.tooltip-line-plan {
+  border-color: var(--accent);
+}
+
+.tooltip-line-original {
+  border-color: var(--original);
+  border-top-style: dashed;
+}
+
+.tooltip-key-delta {
+  width: 8px;
+  height: 8px;
+  margin-inline: 3.5px;
+  border-radius: 50%;
+  background: var(--gain-ink);
+}
+
+.tooltip-key-interest {
+  background: var(--interest);
+}
+
+.tooltip-key-principal {
+  background: var(--principal);
+}
+
+.tooltip-key-extra {
+  background-color: var(--extra);
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent 0 3px,
+    rgba(255, 255, 255, 0.72) 3px 4px
+  );
 }
 
 .chart-tooltip .drag-cancel {
