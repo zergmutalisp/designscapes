@@ -284,3 +284,11 @@
   - Added Nordic Civic, Solarized Editorial, Cobalt Ledger, and Muted Plum token systems covering surfaces, typography, controls, chart series, selection, focus, errors, and shadows.
   - Added an accessible responsive palette selector, dynamic browser theme color, and Nordic Civic as the no-flash default without changing calculator values or state.
   - Verified WCAG AA text-role contrast, rendered all four themes at 1440×900 and 390×844, and added browser regressions for theme tokens, defaults, calculation stability, and narrow-phone overflow.
+
+## 2026-07-10
+### 13:36:46
+- Request: Make Cobalt Ledger the default and assess whether bright lime money figures would improve the calculator's financial semantics.
+- Assessment: Adopt Cobalt Ledger as the stable public-facing default, but reserve any future lime treatment for genuinely positive deltas rather than applying a profit signal to payments and other mixed-purpose figures.
+- Work completed:
+  - Changed the initial document theme, selected palette option, browser theme color, and focus regression to Cobalt Ledger.
+  - Preserved the other three session-only palette choices and verified calculation stability, responsive behavior, and the full browser suite under the new default.
