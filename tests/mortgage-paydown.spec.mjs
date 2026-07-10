@@ -10,11 +10,14 @@ async function openCalculator(page, viewport = { width: 1366, height: 768 }) {
 test('shows verified defaults and a keyboard-readable desktop inspector', async ({ page }) => {
   await openCalculator(page, { width: 1440, height: 900 });
 
-  await expect(page.locator('#interest-saved')).toHaveText('$267,928');
+  await expect(page.locator('#interest-saved')).toHaveText('$286,709');
   await expect(page.locator('#payment-with-extras')).toHaveText('$3,528');
-  await expect(page.locator('#time-saved')).toHaveText('14 yr 6 mo');
+  await expect(page.locator('#time-saved')).toHaveText('15 yr 3 mo');
   await expect(page.locator('#year-original-balance')).toHaveText('$390,759');
-  await expect(page.locator('#year-balance-gap')).toHaveText('$11,303');
+  await expect(page.locator('#year-balance-gap')).toHaveText('$24,424');
+  await expect(page.getByRole('combobox', { name: 'Start year' })).toHaveValue('1');
+  await expect(page.getByRole('combobox', { name: 'Start month within year' })).toHaveValue('2');
+  await expect(page.locator('#start-month-note')).toContainText('Loan month 2');
 
   const detail = page.locator('#year-detail');
   await expect(detail).toBeVisible();
@@ -27,6 +30,7 @@ test('shows verified defaults and a keyboard-readable desktop inspector', async 
   const headingBox = await page.locator('.chart-heading').boundingBox();
   const inspectorBox = await page.locator('.year-inspector').boundingBox();
   expect(chartBox.width / resultsBox.width).toBeGreaterThan(0.94);
+  expect(chartBox.height).toBeGreaterThanOrEqual(480);
   expect(Math.abs(headingBox.y - inspectorBox.y)).toBeLessThan(6);
 
   const chartViewport = await page.locator('#paydown-chart').evaluate(svg => ({
@@ -37,6 +41,22 @@ test('shows verified defaults and a keyboard-readable desktop inspector', async 
   }));
   expect(Math.abs(chartViewport.clientHeight - chartViewport.viewBoxHeight)).toBeLessThan(2);
   expect(Math.abs(chartViewport.clientWidth - chartViewport.viewBoxWidth)).toBeLessThan(2);
+
+  const plotGeometry = await page.locator('#paydown-chart').evaluate(svg => {
+    const yValues = [...svg.querySelectorAll('.grid-line')]
+      .map(line => Number(line.getAttribute('y1')));
+    const paymentYs = yValues.slice(0, 3);
+    const balanceYs = yValues.slice(3, 6);
+    return {
+      paymentHeight: Math.max(...paymentYs) - Math.min(...paymentYs),
+      balanceHeight: Math.max(...balanceYs) - Math.min(...balanceYs)
+    };
+  });
+  expect(plotGeometry.paymentHeight).toBeGreaterThanOrEqual(150);
+  expect(plotGeometry.balanceHeight).toBeGreaterThanOrEqual(150);
+
+  const legendBox = await page.locator('.chart-legend').boundingBox();
+  expect(legendBox.y + legendBox.height).toBeLessThanOrEqual(resultsBox.y + resultsBox.height + 1);
 
   await expect(page.locator('footer')).toContainText('The data entered on this page is not saved anywhere.');
 
@@ -106,9 +126,31 @@ test('reset restores all default inputs and outputs', async ({ page }) => {
   await expect(page.getByRole('spinbutton', { name: 'Home price in dollars' })).toHaveValue('500000');
   await expect(page.getByRole('spinbutton', { name: 'Down payment in dollars' })).toHaveValue('100000');
   await expect(page.getByRole('spinbutton', { name: 'Extra monthly payment in dollars' })).toHaveValue('1000');
-  await expect(page.getByRole('combobox', { name: 'Start year' })).toHaveValue('2');
+  await expect(page.getByRole('combobox', { name: 'Start year' })).toHaveValue('1');
   await expect(page.getByRole('combobox', { name: 'Start month within year' })).toHaveValue('2');
-  await expect(page.locator('#interest-saved')).toHaveText('$267,928');
+  await expect(page.locator('#interest-saved')).toHaveText('$286,709');
+});
+
+test('keeps both chart panels readable at the tablet-to-desktop breakpoint', async ({ page }) => {
+  await openCalculator(page, { width: 821, height: 900 });
+
+  const geometry = await page.evaluate(() => {
+    const chart = document.querySelector('#chart-shell').getBoundingClientRect();
+    const yValues = [...document.querySelectorAll('#paydown-chart .grid-line')]
+      .map(line => Number(line.getAttribute('y1')));
+    return {
+      chartHeight: chart.height,
+      clientWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+      paymentHeight: Math.max(...yValues.slice(0, 3)) - Math.min(...yValues.slice(0, 3)),
+      balanceHeight: Math.max(...yValues.slice(3, 6)) - Math.min(...yValues.slice(3, 6))
+    };
+  });
+
+  expect(geometry.chartHeight).toBeGreaterThanOrEqual(480);
+  expect(geometry.paymentHeight).toBeGreaterThanOrEqual(150);
+  expect(geometry.balanceHeight).toBeGreaterThanOrEqual(150);
+  expect(geometry.scrollWidth).toBe(geometry.clientWidth);
 });
 
 test('retains comparison context and fits maximum values on narrow phones', async ({ page }) => {

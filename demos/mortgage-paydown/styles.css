@@ -1210,8 +1210,8 @@ footer p {
   .chart-shell {
     grid-column: 1 / -1;
     grid-row: 2;
-    height: 100%;
-    min-height: 320px;
+    height: clamp(480px, 52svh, 560px);
+    min-height: 480px;
     margin-top: 0.5rem;
   }
 
@@ -1292,10 +1292,10 @@ footer p {
 
   .calculator {
     width: min(1440px, calc(100% - 32px));
-    height: calc(100svh - 82px);
-    min-height: 618px;
+    height: auto;
+    min-height: 0;
     margin-top: 14px;
-    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
   }
 
   .calculator > .result-summary {
@@ -1375,8 +1375,8 @@ footer p {
   .results {
     min-height: 0;
     grid-template-columns: minmax(260px, 0.4fr) minmax(680px, 1.6fr);
-    grid-template-rows: auto minmax(230px, 1fr) auto;
-    padding: 10px 22px 14px;
+    grid-template-rows: auto auto auto;
+    padding: 14px 22px 18px;
   }
 
   .year-inspector input[type="range"] {
@@ -1448,37 +1448,13 @@ footer p {
   }
 
   .chart-shell {
-    min-height: 230px;
-    margin-top: 0.2rem;
+    height: clamp(480px, 52svh, 560px);
+    min-height: 480px;
+    margin-top: 0.65rem;
   }
 
   .chart-legend {
     margin-top: 0.25rem;
-  }
-}
-
-@media (min-width: 1180px) and (min-height: 700px) and (max-height: 800px) {
-  .results {
-    grid-template-rows: auto minmax(185px, 1fr) auto;
-    padding: 4px 22px 8px;
-  }
-
-  .year-inspector input[type="range"] {
-    height: 24px;
-  }
-
-  .year-detail {
-    padding: 0.3rem 0.5rem;
-  }
-
-  .year-detail p {
-    margin-top: 0.2rem;
-    padding-top: 0.2rem;
-    font-size: 0.62rem;
-  }
-
-  .chart-shell {
-    min-height: 185px;
   }
 }
 

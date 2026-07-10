@@ -15,7 +15,7 @@ import { calculateMortgage } from './mortgage-core.js';
     downPayment: 100000,
     rate: 6.5,
     extra: 1000,
-    startMonth: 14,
+    startMonth: 2,
     endMonth: 360,
     inspectYear: 2
   };
@@ -190,8 +190,8 @@ import { calculateMortgage } from './mortgage-core.js';
     pickers.endYear.innerHTML = yearOptions;
     pickers.startMonth.innerHTML = monthOptions;
     pickers.endMonth.innerHTML = monthOptions;
-    setPickerMonth('start', 14);
-    setPickerMonth('end', 360);
+    setPickerMonth('start', defaults.startMonth);
+    setPickerMonth('end', defaults.endMonth);
   }
 
   function duration(months) {

@@ -6,8 +6,8 @@
   <meta name="description" content="See how extra mortgage payments change lifetime interest and payoff timing.">
   <meta name="theme-color" content="#f2efe7">
   <title>Mortgage Paydown — Extra Payment Calculator</title>
-  <link rel="stylesheet" href="styles.css?v=20260710c">
-  <script type="module" src="app.js?v=20260710c"></script>
+  <link rel="stylesheet" href="styles.css?v=20260710d">
+  <script type="module" src="app.js?v=20260710d"></script>
 </head>
 <body>
   <a class="skip-link" href="#calculator">Skip to calculator</a>
@@ -39,25 +39,25 @@
       <div class="result-summary">
         <article>
           <p>Interest saved</p>
-          <strong id="interest-saved">$267,928</strong>
-          <span id="interest-comparison">$242,250 with extras · $510,178 original</span>
+          <strong id="interest-saved">$286,709</strong>
+          <span id="interest-comparison">$223,469 with extras · $510,178 original</span>
         </article>
         <article>
           <p id="payment-summary-label">Payment in extra months</p>
           <strong id="payment-with-extras">$3,528</strong>
-          <span id="payment-comparison">$2,528 base P&amp;I · up to $1,000 extra · $172,000 extra total</span>
+          <span id="payment-comparison">$2,528 base P&amp;I · up to $1,000 extra · $175,965 extra total</span>
         </article>
         <article>
           <p>Time saved</p>
-          <strong id="time-saved">14 yr 6 mo</strong>
-          <span id="payoff-comparison">15 years 6 months with extras · 30 years original</span>
+          <strong id="time-saved">15 yr 3 mo</strong>
+          <span id="payoff-comparison">14 years 9 months with extras · 30 years original</span>
         </article>
       </div>
 
       <div class="mobile-summary-context" aria-label="Plan comparison details">
-        <p><strong>Interest comparison</strong><span id="interest-comparison-mobile">$242,250 with extras · $510,178 original</span></p>
-        <p><strong>Payment details</strong><span id="payment-comparison-mobile">$2,528 base P&amp;I · up to $1,000 extra · $172,000 extra total</span></p>
-        <p><strong>Payoff comparison</strong><span id="payoff-comparison-mobile">15 years 6 months with extras · 30 years original</span></p>
+        <p><strong>Interest comparison</strong><span id="interest-comparison-mobile">$223,469 with extras · $510,178 original</span></p>
+        <p><strong>Payment details</strong><span id="payment-comparison-mobile">$2,528 base P&amp;I · up to $1,000 extra · $175,965 extra total</span></p>
+        <p><strong>Payoff comparison</strong><span id="payoff-comparison-mobile">14 years 9 months with extras · 30 years original</span></p>
       </div>
 
       <aside class="controls" aria-label="Calculator inputs">
@@ -122,14 +122,14 @@
             <div class="month-picker" role="group" aria-labelledby="start-picker-label">
               <label class="sr-only" for="start-year">Start year</label>
               <select id="start-year" aria-describedby="start-month-note">
-                <option value="2" selected>Year 2</option>
+                <option value="1" selected>Year 1</option>
               </select>
               <label class="sr-only" for="start-month-in-year">Start month within year</label>
               <select id="start-month-in-year" aria-describedby="start-month-note">
                 <option value="2" selected>Month 2</option>
               </select>
             </div>
-            <p class="field-note" id="start-month-note">Loan month 14</p>
+            <p class="field-note" id="start-month-note">Loan month 2 · Year 1, month 2</p>
           </div>
 
           <div class="field">
@@ -188,7 +188,7 @@
             <dl>
               <div class="year-detail-primary">
                 <dt>Balance with extras</dt>
-                <dd id="year-balance">$379,456</dd>
+                <dd id="year-balance">$366,335</dd>
               </div>
               <div>
                 <dt>Original balance</dt>
@@ -196,18 +196,18 @@
               </div>
               <div>
                 <dt>Balance reduction</dt>
-                <dd id="year-balance-gap">$11,303</dd>
+                <dd id="year-balance-gap">$24,424</dd>
               </div>
               <div id="year-interest-row">
                 <dt>Plan interest this year</dt>
-                <dd id="year-interest">$25,266</dd>
+                <dd id="year-interest">$24,448</dd>
               </div>
               <div id="year-principal-row">
                 <dt>Plan principal this year</dt>
-                <dd id="year-principal">$16,073</dd>
+                <dd id="year-principal">$17,891</dd>
               </div>
             </dl>
-            <p id="year-detail-note">Includes $11,000 extra principal · $303 interest saved this year</p>
+            <p id="year-detail-note">Includes $12,000 extra principal · $1,121 interest saved this year</p>
           </div>
           <p class="sr-only" id="year-detail-status" aria-live="polite" aria-atomic="true"></p>
         </div>

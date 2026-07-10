@@ -239,3 +239,12 @@
   - Increased desktop control, summary, inspector, legend, and axis typography while keeping the results title compact and aligned with a substantially wider year-detail table.
   - Expanded the plotting canvas on desktop and mobile, removed desktop SVG letterboxing, and flattened the short-desktop chart so the complete calculator remains visible at 1366×768.
   - Restyled the assumptions as a compact supporting note, replaced the footer privacy copy, and added browser regressions for chart width, internal view-box fit, inspector alignment, phone sizing, and the new copy.
+
+## 2026-07-10
+### 12:42:08
+- Request: Repair the over-flattened desktop mortgage charts, adversarially review the UI and UX, and make extra payments begin in Year 1, Month 2 by default.
+- Assessment: Abandon the single-viewport height constraint in favor of a 480–560px analytical canvas, preserve the compact title and wide inspector, and let the page scroll rather than compressing two plots below readable height.
+- Work completed:
+  - Restored at least 150px of plotting height to each desktop and tablet chart panel, kept the 440px mobile chart, and ensured the legend remains inside the results panel.
+  - Changed initialization, reset behavior, static values, gallery preview, calculations, and tests to use Year 1, Month 2 and the resulting $286,709 interest savings estimate.
+  - Added adversarially recommended regressions for desktop plot geometry, the 821px breakpoint, responsive overflow, legend containment, and synchronized default controls.
