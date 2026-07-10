@@ -1,24 +1,95 @@
 :root {
   color-scheme: light;
-  --paper: #f3f0e7;
-  --surface: #fbfaf6;
+  --paper: #f2f4f7;
+  --surface: #fafbfc;
   --surface-strong: #ffffff;
-  --control-surface: #e9e5da;
-  --ink: #18231e;
-  --muted: #4f5e56;
-  --faint: #727d76;
-  --line: #d1d0c7;
-  --line-strong: #747d76;
-  --accent: #075f46;
-  --accent-soft: #d8e9e2;
-  --principal: #29463a;
-  --extra: #087c86;
-  --interest: #c47a2c;
-  --original: #626c75;
-  --focus: #075f46;
-  --error: #8d352f;
-  --shadow: 0 28px 80px rgba(32, 40, 34, 0.09);
+  --control-surface: #e7eaf0;
+  --ink: #2e3440;
+  --muted: #566174;
+  --faint: #697386;
+  --line: #cdd3dc;
+  --line-strong: #697386;
+  --accent: #466a97;
+  --accent-soft: #dce6f1;
+  --principal: #434c5e;
+  --extra: #3f879b;
+  --interest: #b86443;
+  --original: #6e7787;
+  --focus: #466a97;
+  --error: #a9444f;
+  --shadow: 0 28px 80px rgba(46, 52, 64, 0.1);
+  --tooltip-shadow: 0 14px 35px rgba(46, 52, 64, 0.14);
+  --sticky-shadow: 0 8px 24px rgba(46, 52, 64, 0.13);
   --radius: 24px;
+}
+
+:root[data-theme="solarized-editorial"] {
+  --paper: #fdf6e3;
+  --surface: #fffdf6;
+  --surface-strong: #ffffff;
+  --control-surface: #eee8d5;
+  --ink: #073642;
+  --muted: #526b72;
+  --faint: #63777b;
+  --line: #d8d1bd;
+  --line-strong: #718487;
+  --accent: #1f6fa8;
+  --accent-soft: #dceaf0;
+  --principal: #36555c;
+  --extra: #16867f;
+  --interest: #a86100;
+  --original: #718087;
+  --focus: #1f6fa8;
+  --error: #b83f35;
+  --shadow: 0 28px 80px rgba(7, 54, 66, 0.1);
+  --tooltip-shadow: 0 14px 35px rgba(7, 54, 66, 0.14);
+  --sticky-shadow: 0 8px 24px rgba(7, 54, 66, 0.13);
+}
+
+:root[data-theme="cobalt-ledger"] {
+  --paper: #f4f1ea;
+  --surface: #fffdfc;
+  --surface-strong: #ffffff;
+  --control-surface: #e8e5de;
+  --ink: #252932;
+  --muted: #5b6471;
+  --faint: #69727f;
+  --line: #d2d0ca;
+  --line-strong: #757d88;
+  --accent: #315c9b;
+  --accent-soft: #dde6f3;
+  --principal: #3e4857;
+  --extra: #397f99;
+  --interest: #b75c3e;
+  --original: #777f8b;
+  --focus: #315c9b;
+  --error: #a63d35;
+  --shadow: 0 28px 80px rgba(37, 41, 50, 0.1);
+  --tooltip-shadow: 0 14px 35px rgba(37, 41, 50, 0.14);
+  --sticky-shadow: 0 8px 24px rgba(37, 41, 50, 0.13);
+}
+
+:root[data-theme="muted-plum"] {
+  --paper: #f7f3ed;
+  --surface: #fffcf8;
+  --surface-strong: #ffffff;
+  --control-surface: #ebe5e1;
+  --ink: #292331;
+  --muted: #625a68;
+  --faint: #7a7280;
+  --line: #d7d0d3;
+  --line-strong: #7d7480;
+  --accent: #67517f;
+  --accent-soft: #e8dfee;
+  --principal: #414957;
+  --extra: #3f8295;
+  --interest: #b7792f;
+  --original: #827c87;
+  --focus: #67517f;
+  --error: #a64343;
+  --shadow: 0 28px 80px rgba(41, 35, 49, 0.1);
+  --tooltip-shadow: 0 14px 35px rgba(41, 35, 49, 0.14);
+  --sticky-shadow: 0 8px 24px rgba(41, 35, 49, 0.13);
 }
 
 * {
@@ -87,6 +158,33 @@ a {
   display: flex;
   align-items: center;
   gap: 1.2rem;
+}
+
+.theme-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.theme-control label {
+  color: var(--muted);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.theme-control select {
+  min-height: 36px;
+  max-width: 176px;
+  padding: 0.38rem 1.8rem 0.38rem 0.65rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background-color: var(--surface-strong);
+  color: var(--ink);
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
 }
 
 .site-header-meta a {
@@ -637,7 +735,7 @@ button:focus-visible {
   border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--surface-strong);
-  box-shadow: 0 14px 35px rgba(23, 32, 25, 0.12);
+  box-shadow: var(--tooltip-shadow);
   color: var(--ink);
   font-size: 0.72rem;
   pointer-events: none;
@@ -969,11 +1067,41 @@ footer p {
   }
 
   .site-header {
+    gap: 0.5rem;
     padding: 20px 0;
   }
 
   .site-header p {
     display: none;
+  }
+
+  .site-header-meta {
+    gap: 0.5rem;
+  }
+
+  .site-header-meta > a {
+    display: none;
+  }
+
+  .brand {
+    gap: 0.45rem;
+    font-size: 0.88rem;
+  }
+
+  .brand-mark {
+    width: 26px;
+    height: 26px;
+  }
+
+  .theme-control label {
+    display: none;
+  }
+
+  .theme-control select {
+    width: 112px;
+    min-height: 36px;
+    padding-left: 0.55rem;
+    font-size: 0.66rem;
   }
 
   .intro {
@@ -1007,7 +1135,7 @@ footer p {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     padding: 12px 10px;
     border-radius: 18px 18px 0 0;
-    box-shadow: 0 8px 24px rgba(32, 40, 34, 0.11);
+    box-shadow: var(--sticky-shadow);
   }
 
   .result-summary article {

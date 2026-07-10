@@ -10,6 +10,8 @@ import { calculateMortgage } from './mortgage-core.js';
   const inspectYear = byId('inspect-year');
   const calculationStatus = byId('calculation-status');
   const resetButton = byId('reset-calculator');
+  const themeSelect = byId('theme-select');
+  const themeColor = document.querySelector('meta[name="theme-color"]');
   const defaults = {
     price: 500000,
     downPayment: 100000,
@@ -77,6 +79,15 @@ import { calculateMortgage } from './mortgage-core.js';
 
   function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
+  }
+
+  function setTheme(theme) {
+    document.documentElement.dataset.theme = theme;
+    requestAnimationFrame(() => {
+      themeColor.content = getComputedStyle(document.documentElement)
+        .getPropertyValue('--paper')
+        .trim();
+    });
   }
 
   function decimals(value) {
@@ -795,11 +806,13 @@ import { calculateMortgage } from './mortgage-core.js';
   chart.addEventListener('lostpointercapture', cancelChartDrag);
 
   resetButton.addEventListener('click', resetCalculator);
+  themeSelect.addEventListener('change', () => setTheme(themeSelect.value));
 
   const resizeObserver = new ResizeObserver(() => renderChart());
   resizeObserver.observe(chartShell);
 
   populatePickers();
+  setTheme(themeSelect.value);
   syncDownForPrice();
   model = calculate();
   displayedPlan = model.plan.years.map(year => ({ ...year }));

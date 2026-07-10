@@ -67,6 +67,35 @@ test('shows verified defaults and a keyboard-readable desktop inspector', async 
   await expect(page.locator('#year-detail-status')).toContainText('original schedule');
 });
 
+test('offers four semantically stable color themes with Nordic Civic as the default', async ({ page }) => {
+  await openCalculator(page, { width: 1440, height: 900 });
+
+  const selector = page.getByRole('combobox', { name: 'Color theme' });
+  await expect(selector).toHaveValue('nordic-civic');
+  await expect(selector.locator('option')).toHaveCount(4);
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'nordic-civic');
+
+  const themes = [
+    ['nordic-civic', '#f2f4f7', '#466a97', '#434c5e', '#3f879b', '#b86443', '#6e7787'],
+    ['solarized-editorial', '#fdf6e3', '#1f6fa8', '#36555c', '#16867f', '#a86100', '#718087'],
+    ['cobalt-ledger', '#f4f1ea', '#315c9b', '#3e4857', '#397f99', '#b75c3e', '#777f8b'],
+    ['muted-plum', '#f7f3ed', '#67517f', '#414957', '#3f8295', '#b7792f', '#827c87']
+  ];
+
+  for (const [theme, paper, accent, principal, extra, interest, original] of themes) {
+    await selector.selectOption(theme);
+    await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+    const tokens = await page.evaluate(() => {
+      const styles = getComputedStyle(document.documentElement);
+      return ['--paper', '--accent', '--principal', '--extra', '--interest', '--original']
+        .map(token => styles.getPropertyValue(token).trim());
+    });
+    expect(tokens).toEqual([paper, accent, principal, extra, interest, original]);
+    await expect.poll(() => page.locator('meta[name="theme-color"]').getAttribute('content')).toBe(paper);
+    await expect(page.locator('#interest-saved')).toHaveText('$286,709');
+  }
+});
+
 test('treats chart hover as temporary and commits the inspector only on click', async ({ page }) => {
   await openCalculator(page, { width: 1440, height: 900 });
 
@@ -268,5 +297,5 @@ test('retains comparison context and fits maximum values on narrow phones', asyn
     const style = getComputedStyle(element);
     return { color: style.outlineColor, style: style.outlineStyle, width: style.outlineWidth };
   });
-  expect(focus).toEqual({ color: 'rgb(7, 95, 70)', style: 'solid', width: '3px' });
+  expect(focus).toEqual({ color: 'rgb(70, 106, 151)', style: 'solid', width: '3px' });
 });

@@ -275,3 +275,12 @@
   - Added the parenthetical “Drag outside the chart to cancel” instruction as the first drag-tooltip line.
   - Restored balance with extras, original balance, balance reduction, plan interest, interest avoided, and extra principal beneath the release heading.
   - Added regression checks for tooltip order and every retained financial reading, then rendered the expanded tooltip to verify legibility and fit.
+
+## 2026-07-10
+### 13:31:24
+- Request: Add all four proposed color systems to a top-right theme selector and make Nordic Civic the default.
+- Assessment: Preserve one stable analytical color grammar across four atmospheres, change only presentation state during selection, and keep the preference session-only to honor the page's privacy promise.
+- Work completed:
+  - Added Nordic Civic, Solarized Editorial, Cobalt Ledger, and Muted Plum token systems covering surfaces, typography, controls, chart series, selection, focus, errors, and shadows.
+  - Added an accessible responsive palette selector, dynamic browser theme color, and Nordic Civic as the no-flash default without changing calculator values or state.
+  - Verified WCAG AA text-role contrast, rendered all four themes at 1440×900 and 390×844, and added browser regressions for theme tokens, defaults, calculation stability, and narrow-phone overflow.
