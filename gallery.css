@@ -117,7 +117,7 @@ a {
   width: 106%;
   height: 106%;
   object-fit: cover;
-  object-position: center 58%;
+  object-position: center 44%;
   filter: saturate(0.76) contrast(1.02) brightness(0.86);
   transform: translate3d(0, var(--hero-shift, 0), 0) scale(1.035);
   animation: hero-breathe 18s ease-in-out infinite alternate;

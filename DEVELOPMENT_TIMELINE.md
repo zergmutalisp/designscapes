@@ -185,3 +185,12 @@
   - Converted the down-payment value field to dollars, retained its percentage slider, and synchronized both directions without rounding exact dollar entries.
   - Made the home-price field visibly editable, preserved arbitrary typed values, and set both its native stepper and slider to $2,500 increments.
   - Added exact-dollar amortization coverage and browser-tested cash entry, percentage syncing, responsive fit, and financed-balance calculations.
+
+## 2026-07-09
+### 22:05:01
+- Request: Replace the Designscapes splash-page pier animation with the supplied golden-hour cloud video and refit it for desktop and mobile browsing.
+- Assessment: Keep the pier footage attached to the Horizon Pier work, then create device-specific cloud encodes and a matching poster while preserving the splash page's full-bleed video behavior.
+- Work completed:
+  - Replaced the splash hero source with responsive 624px desktop and 480px mobile H.264 encodes plus a matching poster frame.
+  - Reduced the 819 KB source to a 136 KB desktop file and a 64 KB phone file with fast-start playback metadata.
+  - Adjusted the desktop crop and verified autoplay, looping, source selection, full-bleed coverage, text contrast, and zero overflow at 1440×900 and 390×844.
