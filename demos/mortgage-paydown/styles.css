@@ -1435,14 +1435,35 @@ footer p {
 
 @media (min-width: 821px) {
   .intro {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
+    position: static;
+    width: min(1440px, calc(100% - 48px));
+    height: auto;
+    margin: 0 auto;
+    padding: 22px 0 2px;
+    grid-template-columns: minmax(270px, 0.72fr) minmax(0, 1.28fr);
+    align-items: end;
+    gap: clamp(2rem, 5vw, 5rem);
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  .intro .eyebrow {
+    margin-bottom: 0.35rem;
+    font-size: 0.64rem;
+  }
+
+  .intro h1 {
+    max-width: 520px;
+    font-size: clamp(1.85rem, 2.7vw, 2.7rem);
+    line-height: 1.02;
+  }
+
+  .intro-copy {
+    max-width: 780px;
+    margin: 0 0 0.1rem;
+    font-size: clamp(0.82rem, 1vw, 0.96rem);
+    line-height: 1.55;
   }
 
   .calculator {
@@ -1617,14 +1638,14 @@ footer p {
   }
 
   .intro {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
+    position: static;
+    width: min(1440px, calc(100% - 32px));
+    height: auto;
+    margin: 0 auto;
+    padding: 14px 6px 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
   }
 
   .calculator {

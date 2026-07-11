@@ -10,6 +10,14 @@ async function openCalculator(page, viewport = { width: 1366, height: 768 }) {
 test('shows verified defaults and a keyboard-readable desktop inspector', async ({ page }) => {
   await openCalculator(page, { width: 1440, height: 900 });
 
+  const intro = page.locator('.intro');
+  await expect(intro).toBeVisible();
+  await expect(intro).toContainText('Visualize how paying extra each month changes your mortgage balance, total interest, and payoff date.');
+  await expect(intro).toContainText('Even a few hundred dollars paid early and consistently can save thousands over the life of the loan.');
+  const introBox = await intro.boundingBox();
+  const calculatorBox = await page.locator('#calculator').boundingBox();
+  expect(introBox.y + introBox.height).toBeLessThanOrEqual(calculatorBox.y);
+
   await expect(page.locator('#interest-saved')).toHaveText('$286,709');
   await expect(page.locator('#payment-with-extras')).toHaveText('$3,528');
   await expect(page.locator('#time-saved')).toHaveText('15 yr 3 mo');
@@ -406,6 +414,7 @@ test('keeps both chart panels readable at the tablet-to-desktop breakpoint', asy
 test('retains comparison context and fits maximum values on narrow phones', async ({ page }) => {
   await openCalculator(page, { width: 320, height: 800 });
 
+  await expect(page.locator('.intro')).toContainText('Even a few hundred dollars paid early and consistently can save thousands over the life of the loan.');
   await expect(page.locator('.mobile-summary-context')).toBeVisible();
   await expect(page.locator('#interest-comparison-mobile')).toContainText('$510,178 original');
 

@@ -1,4 +1,14 @@
 ## 2026-07-10
+### 17:13:41
+- Request: Add the approved Option A orientation copy to the top of the Mortgage Paydown calculator.
+- Assessment: Restore the existing introduction on desktop as a compact utility-oriented band, retain its established mobile hierarchy, and place the explanation before any metrics or controls without adding another card.
+- Time spent: About 20 minutes.
+- Work completed:
+  - Replaced the previous comparison sentence with the approved two-sentence explanation about monthly extra payments, interest, payoff timing, and early consistent payments.
+  - Reintroduced the heading and description on desktop in a restrained two-column layout while preserving the existing mobile presentation and entrance motion.
+  - Rendered the introduction at 1440×900 and 390×844, checked overflow and console output, and added browser regressions for visibility, exact copy, placement, and mobile fit.
+
+## 2026-07-10
 ### 16:52:04
 - Request: Simplify the main splash header, shorten the Horizon Pier description, and reduce the footer source link to plain GitHub text.
 - Assessment: Keep the hero's center CTA as the sole route into the demos, rebalance the header around the remaining wordmark, and preserve the existing link animation without redundant copy or arrow decoration.
