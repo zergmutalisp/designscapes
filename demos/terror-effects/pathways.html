@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#080a0b" />
+    <meta name="description" content="Compare recorded violence with later European asylum applications without implying individual routes or causation." />
+    <link rel="icon" href="./atlas-mark.svg" type="image/svg+xml" />
+    <title>Country Pathways · Violence and Displacement</title>
+    <script type="module" crossorigin src="./assets/pathways-DcMz0U5R.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-Dezn_h7o.js">
+    <link rel="stylesheet" crossorigin href="./assets/pathways-Bm8RRD87.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#pathways-main">Skip to analysis</a>
+    <div id="pathways-app" class="pathways-app" aria-busy="true">
+      <header class="site-header">
+        <a class="identity" href="./pathways.html" aria-label="Violence and Displacement home">
+          <span class="identity-mark" aria-hidden="true">λ</span>
+          <span>
+            <span class="identity-kicker">Violence and displacement</span>
+            <strong>Country Pathways</strong>
+          </span>
+        </a>
+        <nav class="desktop-nav" aria-label="Project views">
+          <a href="./index.html">Incident atlas</a>
+          <a href="#model-result" aria-current="page">Result</a>
+          <a href="#timeline">Timeline</a>
+          <a href="#destinations">Destinations</a>
+        </nav>
+        <p id="header-coverage" class="header-coverage">Loading coverage…</p>
+      </header>
+
+      <main id="pathways-main">
+        <section id="model-result" class="model-result" aria-labelledby="model-result-title">
+          <div class="result-copy">
+            <p class="section-kicker">Pre-specified forecast test · Global result</p>
+            <h1 id="model-result-title">Adding GTD incident exposure did not materially improve the forecast</h1>
+            <p class="result-status"><span aria-hidden="true">◇</span> General-claim gate not met</p>
+            <p id="result-summary">Loading the frozen forecast result…</p>
+            <p id="result-interpretation" class="result-interpretation"></p>
+            <p id="result-scope" class="result-scope"></p>
+          </div>
+          <div class="result-graphic">
+            <div id="result-interval" class="result-interval" aria-live="polite"></div>
+            <p class="result-context">Fixed global test—the explorer controls below do not alter this result.</p>
+            <details id="fold-details" class="fold-details">
+              <summary>Year-by-year consistency</summary>
+              <div id="fold-results"></div>
+            </details>
+            <div class="result-links">
+              <a href="./data/pathways/model-summary.json" download>Download result data</a>
+              <details>
+                <summary>What changed between models?</summary>
+                <p>M2 uses organized violence, prior applications, migration-network stocks, policy, population, seasonality, trend, and COVID context. M3 adds only the frozen prior-six-month GTD incident exposure.</p>
+              </details>
+            </div>
+          </div>
+        </section>
+
+        <section class="control-rail" aria-labelledby="analysis-controls-title">
+          <div class="control-heading">
+            <div>
+              <p class="section-kicker">Descriptive explorer</p>
+              <h2 id="analysis-controls-title">Explore country timelines</h2>
+            </div>
+            <p>The explorer shows official EU27 records and does not reproduce the fixed Europe30 model target above. Applications are administrative records—not departures, routes, or stated reasons for moving.</p>
+          </div>
+
+          <div class="control-grid">
+            <label class="control-field origin-field">
+              <span>Citizenship</span>
+              <select id="origin-select" aria-label="Select citizenship" disabled>
+                <option>Loading…</option>
+              </select>
+            </label>
+
+            <fieldset class="control-field applicant-field">
+              <legend>Application record</legend>
+              <div id="applicant-type" class="segmented-control">
+                <button type="button" data-type="total" aria-pressed="true">Total</button>
+                <button type="button" data-type="first" aria-pressed="false">First-time</button>
+                <button type="button" data-type="subsequent" aria-pressed="false">Subsequent</button>
+              </div>
+            </fieldset>
+
+            <div class="control-field period-field">
+              <span class="field-label">Shared time focus</span>
+              <div class="month-fields">
+                <label><span>From</span><input id="from-month" type="month" aria-label="Start month" disabled /></label>
+                <span aria-hidden="true">→</span>
+                <label><span>Through</span><input id="to-month" type="month" aria-label="End month" disabled /></label>
+              </div>
+            </div>
+
+            <button id="reset-period" class="reset-button" type="button" disabled>Full overlap</button>
+          </div>
+          <div id="active-context" class="active-context" aria-live="polite">Preparing the shared monthly panel…</div>
+        </section>
+
+        <div id="loading-state" class="loading-state" role="status">
+          <span class="loading-line" aria-hidden="true"></span>
+          Loading country pathways…
+        </div>
+
+        <section id="error-state" class="error-state" role="alert" hidden>
+          <p class="section-kicker">Data unavailable</p>
+          <h2>Country pathways could not be loaded.</h2>
+          <p id="error-message">Check that the generated public data are present, then try again.</p>
+          <button id="retry-button" type="button">Retry</button>
+        </section>
+
+        <div id="analysis-workspace" class="analysis-workspace" hidden>
+          <section id="timeline" class="timeline-workspace" aria-labelledby="timeline-title">
+            <header class="section-intro">
+              <div>
+                <p class="section-kicker">Country-month comparison</p>
+                <h2 id="timeline-title">Aligned monthly evidence</h2>
+              </div>
+              <p>Each panel uses its own labeled, zero-based scale. Move across a panel for exact values; use the table for keyboard-accessible lookup.</p>
+            </header>
+
+            <div id="chart-stack" class="chart-stack" aria-label="Aligned monthly charts"></div>
+
+            <details class="values-disclosure">
+              <summary>View underlying monthly values</summary>
+              <div class="table-scroll" tabindex="0" aria-label="Scrollable monthly values table">
+                <table>
+                  <caption id="values-caption">Monthly values for the selected citizenship and period.</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Month</th>
+                      <th scope="col">GTD incidents</th>
+                      <th scope="col">Civilian-target proxy</th>
+                      <th scope="col">Reported fatalities</th>
+                      <th scope="col">UCDP best deaths</th>
+                      <th scope="col" id="application-column">EU27 applications</th>
+                    </tr>
+                  </thead>
+                  <tbody id="values-body"></tbody>
+                </table>
+              </div>
+            </details>
+          </section>
+
+          <aside id="month-inspector" class="month-inspector" aria-live="polite" aria-label="Selected month values">
+            <p class="section-kicker">Selected month</p>
+            <h2 id="inspector-month">—</h2>
+            <dl id="inspector-values"></dl>
+            <p id="inspector-note" class="inspector-note">Move or focus a monthly chart to inspect a common point in time.</p>
+          </aside>
+
+          <section id="destinations" class="destinations-workspace" aria-labelledby="destinations-title">
+            <header class="section-intro">
+              <div>
+                <p class="section-kicker">Destination distribution</p>
+                <h2 id="destinations-title">Where applications were recorded</h2>
+              </div>
+              <p>Reporting destinations are ranked over the active period. Records may not represent unique people across countries or time.</p>
+            </header>
+            <div class="destination-layout">
+              <ol id="destination-ranking" class="destination-ranking" aria-label="Destination ranking"></ol>
+              <div>
+                <h3>Highest-volume destination timelines</h3>
+                <div id="destination-multiples" class="destination-multiples"></div>
+              </div>
+            </div>
+          </section>
+
+          <section id="coverage" class="coverage-workspace" aria-labelledby="coverage-title">
+            <header class="section-intro">
+              <div>
+                <p class="section-kicker">Interpretation guardrails</p>
+                <h2 id="coverage-title">Coverage, missingness, and provenance</h2>
+              </div>
+              <p>Blank observations remain unknown or unavailable; they are never silently changed to zero.</p>
+            </header>
+            <div class="coverage-grid">
+              <div>
+                <h3>What the comparison measures</h3>
+                <p>GTD records selected terrorist incidents. UCDP records organized violence using a different event system. Eurostat records applications by citizenship and reporting destination. These measures are kept separate.</p>
+              </div>
+              <div>
+                <h3>What it does not establish</h3>
+                <p>Temporal alignment does not establish that recorded terrorism caused an application. Conflict, policy, economic conditions, routes, and existing migration networks may shape both timing and destination.</p>
+              </div>
+              <div>
+                <h3>Current data</h3>
+                <dl id="provenance-list" class="provenance-list"></dl>
+              </div>
+            </div>
+            <div id="coverage-notes" class="coverage-notes"></div>
+          </section>
+        </div>
+      </main>
+
+      <nav class="mobile-nav" aria-label="Project views">
+        <a href="./index.html"><span aria-hidden="true">◫</span>Map</a>
+        <a href="#model-result" aria-current="page"><span aria-hidden="true">◇</span>Result</a>
+        <a href="#timeline"><span aria-hidden="true">⌁</span>Timeline</a>
+        <a href="#destinations"><span aria-hidden="true">≡</span>Destinations</a>
+      </nav>
+    </div>
+    <noscript>This visualization requires JavaScript.</noscript>
+  </body>
+</html>

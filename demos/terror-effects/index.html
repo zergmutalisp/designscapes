@@ -7,8 +7,9 @@
     <meta name="description" content="Explore aggregate patterns in Global Terrorism Database incidents from 2005 through June 2021." />
     <link rel="icon" href="./atlas-mark.svg" type="image/svg+xml" />
     <title>GTD Incident Atlas</title>
-    <script type="module" crossorigin src="./assets/index-C8NFktrm.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-Dsa05AOZ.css">
+    <script type="module" crossorigin src="./assets/atlas-CvhM0w--.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-Dezn_h7o.js">
+    <link rel="stylesheet" crossorigin href="./assets/atlas-DBNv7fN8.css">
   </head>
   <body>
     <a class="skip-link" href="#analysis-panel">Skip map</a>
@@ -38,11 +39,12 @@
             <span class="caption-mode">Incident frequency</span>
             <span id="map-scope">Europe + MENA · 2005–2021 H1</span>
           </div>
-          <div class="map-legend" aria-label="Circle area and orange intensity encode the number of recorded incidents in each aggregate map cell">
+          <div class="map-legend" aria-label="Orange intensity encodes the number of recorded incidents in each 0.25 degree aggregate map cell">
             <span class="legend-title">Incident count</span>
-            <span class="legend-item"><i class="legend-dot dot-small"></i>1</span>
-            <span class="legend-item"><i class="legend-dot dot-medium"></i>10</span>
-            <span class="legend-item"><i class="legend-dot dot-large"></i>100+</span>
+            <span class="legend-item"><i class="legend-swatch count-low"></i>1–3</span>
+            <span class="legend-item"><i class="legend-swatch count-medium"></i>4–14</span>
+            <span class="legend-item"><i class="legend-swatch count-high"></i>15–74</span>
+            <span class="legend-item"><i class="legend-swatch count-peak"></i>75+</span>
           </div>
           <div class="map-credit" aria-label="Basemap attribution">
             <a href="https://openmaptiles.org/" target="_blank" rel="noreferrer">© OpenMapTiles</a>
@@ -88,7 +90,7 @@
               <strong id="metric-mapped">—</strong>
             </div>
             <div>
-              <span class="metric-label">Confirmed fatalities</span>
+              <span class="metric-label">Reported fatalities</span>
               <strong id="metric-fatalities">—</strong>
             </div>
           </section>
@@ -116,8 +118,8 @@
           <details class="methodology">
             <summary>Coverage & methodology</summary>
             <div class="methodology-copy">
-              <p>Circles aggregate geocoded incidents to 0.25° cell centers; they do not mark exact locations. Circle area is approximately proportional to incident count, and orange intensity reinforces that same frequency measure. This does not encode the severity of an individual attack. Open a cell for the exact count.</p>
-              <p>Blank casualty values remain unknown, not zero. “Confirmed fatalities” sums only reported values and includes victims and perpetrators under GTD conventions.</p>
+              <p>Visible squares are 0.25° aggregate cells, not individual attack locations. Darker orange means more recorded incidents in the cell. This does not encode the severity of an individual attack. Open a cell for the exact count.</p>
+              <p>Blank casualty values remain unknown, not zero. “Reported fatalities” sums available GTD values and includes victims and perpetrators under GTD conventions.</p>
               <p>2021 covers January–June only. Collection methods and variable availability changed over time, so annual differences can partly reflect methodology.</p>
             </div>
           </details>
