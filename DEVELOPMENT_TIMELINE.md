@@ -357,3 +357,12 @@
 - Work completed:
   - Added `AGENTS.local.md` for `webpage_test`.
   - Created `DEVELOPMENT_TIMELINE.md` with the first entry.
+
+## 2026-07-11
+### 22:34:06
+- Request: Publish the GTD atlas as an unlinked designscapes demo at `/demos/terror-effects`.
+- Assessment: Deploy the aggregate-only static production bundle directly under the requested route, leave the gallery unchanged, and add route, privacy, and responsive regressions before publishing.
+- Work completed:
+  - Added the 3.4 MB GTD atlas bundle and aggregate JSON payload under `demos/terror-effects` without adding a homepage or gallery link.
+  - Added a Playwright regression verifying desktop and mobile rendering, aggregate-only fields, compact attribution, expected summary values, and the intentionally unlinked route.
+  - Corrected a transient narrow-screen overflow in the source bundle and passed all 8 model tests plus all 13 browser tests.

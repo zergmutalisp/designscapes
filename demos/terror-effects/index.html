@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#07090a" />
+    <meta name="description" content="Explore aggregate patterns in Global Terrorism Database incidents from 2005 through June 2021." />
+    <link rel="icon" href="./atlas-mark.svg" type="image/svg+xml" />
+    <title>GTD Incident Atlas</title>
+    <script type="module" crossorigin src="./assets/index-C8NFktrm.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-Dsa05AOZ.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#analysis-panel">Skip map</a>
+    <div id="app" class="app-shell" aria-busy="true">
+      <header class="app-header">
+        <div class="brand-lockup">
+          <span class="brand-mark" aria-hidden="true">λ</span>
+          <div>
+            <p class="eyebrow">Global Terrorism Database</p>
+            <h1>Incident Atlas</h1>
+          </div>
+        </div>
+        <div class="header-status">
+          <span class="status-light" aria-hidden="true"></span>
+          <span id="header-period">2005—2021 H1</span>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="map-stage" aria-label="Interactive incident density map">
+          <div id="map" class="map-canvas"></div>
+          <div id="map-loading" class="map-loading" role="status">
+            <span class="loading-sweep" aria-hidden="true"></span>
+            Loading aggregate incident grid…
+          </div>
+          <div class="map-caption" id="map-caption">
+            <span class="caption-mode">Incident frequency</span>
+            <span id="map-scope">Europe + MENA · 2005–2021 H1</span>
+          </div>
+          <div class="map-legend" aria-label="Circle area and orange intensity encode the number of recorded incidents in each aggregate map cell">
+            <span class="legend-title">Incident count</span>
+            <span class="legend-item"><i class="legend-dot dot-small"></i>1</span>
+            <span class="legend-item"><i class="legend-dot dot-medium"></i>10</span>
+            <span class="legend-item"><i class="legend-dot dot-large"></i>100+</span>
+          </div>
+          <div class="map-credit" aria-label="Basemap attribution">
+            <a href="https://openmaptiles.org/" target="_blank" rel="noreferrer">© OpenMapTiles</a>
+            <span aria-hidden="true">·</span>
+            <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap</a>
+          </div>
+          <button id="reset-view" class="reset-view" type="button">Reset view</button>
+        </section>
+
+        <aside id="analysis-panel" class="analysis-panel" aria-label="Map controls and summary">
+          <section class="control-section" aria-labelledby="area-heading">
+            <div class="section-heading">
+              <h2 id="area-heading">Area</h2>
+              <span id="area-description">Europe, Middle East, Levant, and North Africa</span>
+            </div>
+            <div id="area-tabs" class="area-tabs" role="group" aria-label="Geographic focus"></div>
+          </section>
+
+          <section class="control-section time-section" aria-labelledby="period-heading">
+            <div class="section-heading">
+              <h2 id="period-heading">Period</h2>
+              <span>Click the trend for a single year</span>
+            </div>
+            <div class="year-controls">
+              <label>From<select id="start-year" aria-label="Start year"></select></label>
+              <span aria-hidden="true">→</span>
+              <label>Through<select id="end-year" aria-label="End year"></select></label>
+            </div>
+            <div class="quick-periods" role="group" aria-label="Quick period selections">
+              <button type="button" data-period="full">Full period</button>
+              <button type="button" data-period="latest">2021 H1</button>
+              <button type="button" data-period="reset">Reset</button>
+            </div>
+          </section>
+
+          <section class="metric-strip" aria-label="Selected period summary">
+            <div>
+              <span class="metric-label">Incidents</span>
+              <strong id="metric-events">—</strong>
+            </div>
+            <div>
+              <span class="metric-label">Mapped</span>
+              <strong id="metric-mapped">—</strong>
+            </div>
+            <div>
+              <span class="metric-label">Confirmed fatalities</span>
+              <strong id="metric-fatalities">—</strong>
+            </div>
+          </section>
+          <p id="metric-context" class="metric-context">—</p>
+
+          <section class="trend-section" aria-labelledby="trend-heading">
+            <div class="section-heading">
+              <h2 id="trend-heading">Recorded incidents by year</h2>
+              <span>Counts; baseline at zero</span>
+            </div>
+            <svg id="trend-chart" class="trend-chart" viewBox="0 0 360 150" role="img" aria-labelledby="trend-title trend-desc">
+              <title id="trend-title">Annual recorded incident counts</title>
+              <desc id="trend-desc">A line chart of complete release years with the partial 2021 period shown separately.</desc>
+            </svg>
+          </section>
+
+          <section class="ranking-section" aria-labelledby="ranking-heading">
+            <div class="section-heading">
+              <h2 id="ranking-heading">Highest recorded counts</h2>
+              <span id="ranking-period">Selected period</span>
+            </div>
+            <ol id="country-ranking" class="country-ranking"></ol>
+          </section>
+
+          <details class="methodology">
+            <summary>Coverage & methodology</summary>
+            <div class="methodology-copy">
+              <p>Circles aggregate geocoded incidents to 0.25° cell centers; they do not mark exact locations. Circle area is approximately proportional to incident count, and orange intensity reinforces that same frequency measure. This does not encode the severity of an individual attack. Open a cell for the exact count.</p>
+              <p>Blank casualty values remain unknown, not zero. “Confirmed fatalities” sums only reported values and includes victims and perpetrators under GTD conventions.</p>
+              <p>2021 covers January–June only. Collection methods and variable availability changed over time, so annual differences can partly reflect methodology.</p>
+            </div>
+          </details>
+
+          <footer class="source-note">
+            <a href="https://www.start.umd.edu/data-tools/GTD" target="_blank" rel="noreferrer">GTD / START, University of Maryland ↗</a>
+            <span>Non-commercial aggregate visualization. Raw GTD data are not republished.</span>
+            <span>Basemap hosted by OpenFreeMap · style schema © OpenMapTiles · data © OpenStreetMap contributors</span>
+          </footer>
+        </aside>
+      </main>
+    </div>
+    <noscript>This visualization requires JavaScript.</noscript>
+  </body>
+</html>
