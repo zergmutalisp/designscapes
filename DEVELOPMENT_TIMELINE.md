@@ -1,3 +1,16 @@
+## 2026-09-04
+### 13:21:17
+- Request: Add GitHub attribution and make Napoleon a feature and subpage of Designscapes.
+- Assessment: Retain the exhibition's visual identity, add discreet collection/source links, and prepare a static GitHub Pages release in an isolated clone inside this workspace.
+- Time spent: Approximately 17 minutes of thinking, implementation and verification so far.
+- Work completed:
+  - Added a Codex-assisted project credit linking to zergmutalisp, a Designscapes collection link, and a source-code link in the footer; added Back to Designscapes to Contents.
+  - Configured relative production asset paths so the exhibition works under /designscapes/demos/napoleon/.
+  - Added the Napoleon feature to the Designscapes gallery, packaged reproducible source under sources/napoleon and static output under demos/napoleon, and documented the rebuild command.
+  - Passed all seven exhibition browser checks, three gallery/integration checks and eight existing calculation tests; fixed a footer link accessibility issue detected by axe.
+  - Inspected the new gallery and footer at 1440 × 900 and 390 × 844, verified nested image/font loading and checked for console errors and horizontal overflow.
+  - Prepared publication through the repository's established main-branch GitHub Pages workflow after verifying SSH transport.
+
 ## 2026-07-10
 ### 17:13:41
 - Request: Add the approved Option A orientation copy to the top of the Mortgage Paydown calculator.

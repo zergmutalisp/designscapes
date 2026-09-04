@@ -821,3 +821,14 @@ footer p:last-child {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Napoleon: a small poster drawn from the exhibition's own historical image. */
+.napoleon-visual{background:#101210;color:#eee8dc}
+.napoleon-visual img{position:absolute;inset:0 0 0 auto;width:75%;height:100%;object-fit:cover;object-position:50% 5%;filter:saturate(.72) brightness(.75)}
+.napoleon-visual::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,#101210 0%,#101210d9 22%,#10121022 75%),linear-gradient(0deg,#101210d9,transparent 65%)}
+.napoleon-preview-copy{position:absolute;z-index:2;left:8%;bottom:20%;right:5%}
+.napoleon-preview-copy span{display:block;color:#d1b782;font-size:.65rem;letter-spacing:.18em;margin-bottom:24px}
+.napoleon-preview-copy strong{display:block;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(55px,6.7vw,105px);line-height:.9;font-weight:500;letter-spacing:-.04em}
+.napoleon-preview-copy em{display:block;font-family:"Cormorant Garamond",Georgia,serif;font-size:clamp(23px,2.3vw,38px);line-height:1.2;color:#d1b782;margin-top:14px}
+.napoleon-preview-credit{position:absolute;left:8%;right:7%;bottom:6%;z-index:2;color:#c6c9bd;font-size:9px;line-height:1.7}
+@media(max-width:600px){.napoleon-visual img{width:100%;object-position:50% 0%}.napoleon-visual::before{background:linear-gradient(0deg,#101210 0%,#101210bd 32%,#10121011 72%)}.napoleon-preview-copy{bottom:20%}.napoleon-preview-copy strong{font-size:67px}.napoleon-preview-copy em{font-size:27px}.napoleon-preview-credit{font-size:8px}}
