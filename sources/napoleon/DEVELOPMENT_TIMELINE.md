@@ -1,4 +1,35 @@
 ## 2026-09-04
+### 13:29:55
+- Request: Add a Designscapes return link to the exhibition's top banner.
+- Assessment: Keep the link permanently visible beside Contents, with compact mobile branding and 44px keyboard-accessible navigation targets.
+- Time spent: Approximately 6 minutes of thinking, implementation and verification.
+- Work completed:
+  - Added a brass-accented left-arrow Designscapes link to the fixed top banner, pointing to the main demos page.
+  - Verified the rendered header at 1440px desktop and 320px/390px mobile widths, including keyboard activation to the public gallery.
+  - Passed the production build and all seven existing browser checks, including accessibility and responsive overflow checks.
+  - Updated the editable exhibition source and rebuilt static Pages release.
+
+## 2026-09-04
+### 13:28:37
+- Request: Add a link in the top banner back to the main Designscapes demos page.
+- Assessment: Add a permanent, keyboard-accessible text link using the existing brass accent; simplify the mobile wordmark to keep all navigation on one line.
+- Time spent: Approximately 3 minutes of thinking and implementation; rendered verification and publication follow.
+- Work completed:
+  - Added an arrow and Designscapes link between the chapter label and Contents, pointing to https://zergmutalisp.github.io/designscapes/.
+  - Preserved a 44px link target and the Napoleon name on narrow screens.
+
+## 2026-09-04
+### 13:23:57
+- Request: Publish the Napoleon exhibition as a Designscapes feature with GitHub attribution.
+- Assessment: Complete the release only after verifying both GitHub Pages deployment and the public navigation flow.
+- Time spent: Approximately 17 minutes total thinking and working time for this follow-up request.
+- Work completed:
+  - Published commit ab87feb5ed3d662e9860bbc33b76ca180e9ccc82 to zergmutalisp/designscapes main; verified the remote ref and successful Pages run 33915904733.
+  - Verified https://zergmutalisp.github.io/designscapes/demos/napoleon/ returns HTTP 200 and renders its artwork, fonts, narrative and new project credits without console errors.
+  - Opened the exhibition from the public gallery and exercised Contents → Back to Designscapes successfully.
+  - Retained the standalone project and an isolated release clone under work/designscapes-release; the existing Designscapes checkout remains unmodified.
+
+## 2026-09-04
 ### 13:21:17
 - Request: Add GitHub attribution and make Napoleon a feature and subpage of Designscapes.
 - Assessment: Retain the exhibition's visual identity, add discreet collection/source links, and prepare a static GitHub Pages release in an isolated clone inside this workspace.

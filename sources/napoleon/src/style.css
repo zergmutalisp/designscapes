@@ -128,6 +128,7 @@ button {
   border-bottom: 1px solid #ffffff0c;
 }
 .wordmark {
+  min-height: 44px;
   display: flex;
   gap: 16px;
   align-items: center;
@@ -157,6 +158,19 @@ button {
 .header-right > .eyebrow {
   color: var(--muted);
   font-size: 9px;
+}
+.header-collection {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--gold);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.header-collection:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 .contents-trigger {
   display: flex;
@@ -2594,5 +2608,28 @@ footer {
     font-size: 11px;
     min-height: 44px;
     padding: 12px 0;
+  }
+}
+
+/* Keep the collection link and contents visible in a single mobile banner. */
+@media (max-width: 600px) {
+  .site-header {
+    gap: 12px;
+  }
+  .header-right {
+    gap: 16px;
+  }
+  .header-collection {
+    gap: 6px;
+    font-size: 10px;
+  }
+  .wordmark .monogram,
+  .wordmark small {
+    display: none;
+  }
+}
+@media (max-width: 360px) {
+  .site-header {
+    padding-inline: 16px;
   }
 }

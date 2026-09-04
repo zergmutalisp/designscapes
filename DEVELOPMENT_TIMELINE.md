@@ -1,4 +1,15 @@
 ## 2026-09-04
+### 13:29:55
+- Request: Add a Designscapes return link to the exhibition's top banner.
+- Assessment: Keep the link permanently visible beside Contents, with compact mobile branding and 44px keyboard-accessible navigation targets.
+- Time spent: Approximately 6 minutes of thinking, implementation and verification.
+- Work completed:
+  - Added a brass-accented left-arrow Designscapes link to the fixed top banner, pointing to the main demos page.
+  - Verified the rendered header at 1440px desktop and 320px/390px mobile widths, including keyboard activation to the public gallery.
+  - Passed the production build and all seven existing browser checks, including accessibility and responsive overflow checks.
+  - Updated the editable exhibition source and rebuilt static Pages release.
+
+## 2026-09-04
 ### 13:21:17
 - Request: Add GitHub attribution and make Napoleon a feature and subpage of Designscapes.
 - Assessment: Retain the exhibition's visual identity, add discreet collection/source links, and prepare a static GitHub Pages release in an isolated clone inside this workspace.
